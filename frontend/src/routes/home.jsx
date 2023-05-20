@@ -1,22 +1,15 @@
 import { useState } from "react";
+import { useLoaderData } from "react-router-dom";
 
-const getToken = async (code, setToken) => {
-    console.log('getToken', code)
-    const res = await fetch(`http://localhost:3001/api/github/${code}`)
-    await res.json().then((result) => {
-        console.log(result);
-        setToken(result)
-    });
+export function loader ({ request }) {
+    const url = new URL(request.url);
+    const code = url.searchParams.get('code')
+    return fetch(`http://localhost:3001/api/github/${code}`);
 }
 
 export default function Home() {
     // code from the github redirect needed to exchange for an api token
-    const code = new URLSearchParams(location.search).get('code')
-    const [token, setToken] = useState();
-
-    if (code && !token) {
-        getToken(code, setToken)
-    }
+    const { token } = useLoaderData()
 
     // use token to make api requests
 

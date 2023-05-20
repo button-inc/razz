@@ -34,10 +34,18 @@ app.get("/api/github/:code", (req, res) => {
       }
   )
   .then(response => {
-    console.log(response.data)
-    const token = response.data
-    console.log(token)
-    res.send(token);
+    const data = response.data.split('&')
+
+    if (data[0].includes("access_token")) {
+      const token = data[0].split('=')[1]
+      console.log('got token')
+      res.status(200).send({"token": token})
+    }
+    else if (data[0].includes("error")){
+      console.log('error')
+      res.status(400).send({"error": data[0]})
+    }
+
   })
   .catch(error => {
     res.send(JSON.stringify(error));
