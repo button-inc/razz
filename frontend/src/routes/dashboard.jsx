@@ -2,16 +2,19 @@ import { useState } from "react";
 import { useLoaderData } from "react-router-dom";
 
 export function loader ({ request }) {
+    console.log('home loader')
     const url = new URL(request.url);
     const code = url.searchParams.get('code')
     return fetch(`http://localhost:3001/api/github/${code}`);
 }
 
-export default function Home() {
+export default function Dashboard() {
+
     // code from the github redirect needed to exchange for an api token
-    const { token } = useLoaderData()
+    const [token, setToken] = useState(useLoaderData());
 
     // use token to make api requests
+
 
     return (
       <>
