@@ -30,26 +30,6 @@ export default function Dashboard() {
             console.log(response)
         })
 
-
-
-
-    // List repositories accessible to the user access token
-    //https://docs.github.com/en/rest/apps/installations?apiVersion=2022-11-28#list-repositories-accessible-to-the-user-access-token
-    //     curl -L \
-    //   -H "Accept: application/vnd.github+json" \
-    //   -H "Authorization: Bearer ghu_TGFGmsUx7vjayvXgVLXDeFtY12vrQw0Ae4c3"\
-    //   -H "X-GitHub-Api-Version: 2022-11-28" \
-    //   https://api.github.com/user/installations/1/repositories
-
-    // "message": "Not Found",
-
-
-    //   curl --request GET \
-    // --url "https://api.github.com/user" \
-    // --header "Accept: application/vnd.github+json" \
-    // --header "Authorization: Bearer ghu_o7IEtTPpVXJZQGz8QA9rKzu1p3cREe29SSaJ" \
-    // --header "X-GitHub-Api-Version: 2022-11-28"
-
     return (
       <>
         {/* <div id="sidebar">
