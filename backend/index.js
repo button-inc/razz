@@ -35,7 +35,7 @@ app.get("/api/github/:code", (req, res) => {
   )
   .then(response => {
     const data = response.data.split('&')
-
+    console.log(data)
     if (data[0].includes("access_token")) {
       const token = data[0].split('=')[1]
       console.log('got token')
