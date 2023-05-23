@@ -4,6 +4,7 @@ import './index.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import ErrorPage from './error-page'
 import Dashboard, {loader as dashboardLoader} from './routes/dashboard'
+import Plan, {loader as planLoader} from './routes/plan'
 import HomePage from './routes/homepage'
 
 const router = createBrowserRouter([
@@ -17,6 +18,11 @@ const router = createBrowserRouter([
     element: <Dashboard />,
     errorElement: <ErrorPage />,
     loader: dashboardLoader
+  },
+  {
+    path: "plan/:owner/:repo/:token",
+    element: <Plan />,
+    loader: planLoader
   },
 ]);
 
