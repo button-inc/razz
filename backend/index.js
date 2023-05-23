@@ -45,7 +45,6 @@ app.get("/api/github/:code", (req, res) => {
       console.log('error')
       res.status(400).send({"error": data[0]})
     }
-
   })
   .catch(error => {
     res.send(JSON.stringify(error));
