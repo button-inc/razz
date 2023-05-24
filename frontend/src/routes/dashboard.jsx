@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Outlet, Link, useLoaderData } from "react-router-dom";
+import Navbar from "../components/navbar";
 
 // exchange GitHub redirect code for user access token
 export function loader ({ request }) {
@@ -33,12 +34,8 @@ export default function Dashboard() {
         getUserRepos()
     }
 
-    // TODO: selecting a repo creates a session for estimation??
-    // TODO: creates a permanent link for authenticated users to join?
     // List issues in a repository. Only open issues will be listed.
     // https://api.github.com/repos/OWNER/REPO/issues
-    // OWNER The account owner of the repository. The name is not case sensitive.
-    // REPO The name of the repository. The name is not case sensitive.
     async function getRepoIssues (repo) {
         // Lists repositories that the authenticated user has explicit permission (:read, :write, or :admin) to access.
         const response = await fetch(`https://api.github.com/repos/${repo}/issues`, {
@@ -50,7 +47,7 @@ export default function Dashboard() {
             }
         })
         const data = await response.json()
-        console.log(data)
+
         const issues = data.map((item) => {
             const container = {};
 
@@ -64,13 +61,13 @@ export default function Dashboard() {
     }
 
     function handleOnRepoClick (repo) {
-        console.log('handle repo click', repo)
         getRepoIssues(repo)
     }
 
     return (
       <>
-        {/* <div id="sidebar">
+        <Navbar />
+        <div id="sidebar">
             <h1>React Router Contacts</h1>
             <div>
             <form id="search-form" role="search">
@@ -95,7 +92,7 @@ export default function Dashboard() {
                 <button type="submit">New</button>
             </form>
             </div>
-        </div> */}
+        </div>
         <div id="detail">
             Dashboard
             {/* <ReposList items={repos}  /> */}
