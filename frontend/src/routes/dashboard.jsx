@@ -64,10 +64,15 @@ export default function Dashboard() {
         getRepoIssues(repo)
     }
 
+    // button to "import github issues"
+    // opens modal in which the user can navigate repos and select issues
+    // TODO: paginate requests if many repos/issues
+    // TODO: add search
+
     return (
       <>
         <Navbar />
-        <div id="sidebar">
+        {/* <div id="sidebar">
             <h1>React Router Contacts</h1>
             <div>
             <form id="search-form" role="search">
@@ -92,14 +97,12 @@ export default function Dashboard() {
                 <button type="submit">New</button>
             </form>
             </div>
-        </div>
-        <div id="detail">
-            Dashboard
-            {/* <ReposList items={repos}  /> */}
+        </div> */}
+        <div>
             {repos.map((item) => <li key={item} onClick={() => handleOnRepoClick(item)}>{item}</li>)}
         </div>
         {issues.length &&
-            <div id="detail">
+            <div>
                 {issues.map((item) => <li key={item.number}>{item.title}</li>)}
             </div>
         }
