@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Outlet, Link, useLoaderData } from "react-router-dom";
-import ReposList from "../components/reposlist";
+
 // exchange GitHub redirect code for user access token
 export function loader ({ request }) {
     const url = new URL(request.url);
@@ -11,6 +11,7 @@ export function loader ({ request }) {
 export default function Dashboard() {
     const [token, setToken] = useState(useLoaderData());
     const [repos, setRepos] = useState([])
+    const [issues, setIssues] = useState([])
 
     async function getUserRepos () {
         // Lists repositories that the authenticated user has explicit permission (:read, :write, or :admin) to access.
@@ -28,21 +29,19 @@ export default function Dashboard() {
         setRepos(repos)
     }
 
-    if (token.token) {
+    if (token.token && !repos.length) {
         getUserRepos()
     }
 
     // TODO: selecting a repo creates a session for estimation??
     // TODO: creates a permanent link for authenticated users to join?
-
-
     // List issues in a repository. Only open issues will be listed.
     // https://api.github.com/repos/OWNER/REPO/issues
     // OWNER The account owner of the repository. The name is not case sensitive.
     // REPO The name of the repository. The name is not case sensitive.
-    async function getRepoIssues (owner, repo) {
+    async function getRepoIssues (repo) {
         // Lists repositories that the authenticated user has explicit permission (:read, :write, or :admin) to access.
-        const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues`, {
+        const response = await fetch(`https://api.github.com/repos/${repo}/issues`, {
             method: "GET",
             headers: {
                 "Accept": "application/vnd.github+json",
@@ -50,7 +49,23 @@ export default function Dashboard() {
                 "X-GitHub-Api-Version": "2022-11-28",
             }
         })
-        return response.json();
+        const data = await response.json()
+        console.log(data)
+        const issues = data.map((item) => {
+            const container = {};
+
+            container.title = item.title;
+            container.number = item.number;
+            container.url = item.url;
+
+            return container;
+        })
+        setIssues(issues)
+    }
+
+    function handleOnRepoClick (repo) {
+        console.log('handle repo click', repo)
+        getRepoIssues(repo)
     }
 
     return (
@@ -83,8 +98,14 @@ export default function Dashboard() {
         </div> */}
         <div id="detail">
             Dashboard
-            <ReposList items={repos} />
+            {/* <ReposList items={repos}  /> */}
+            {repos.map((item) => <li key={item} onClick={() => handleOnRepoClick(item)}>{item}</li>)}
         </div>
+        {issues.length &&
+            <div id="detail">
+                {issues.map((item) => <li key={item.number}>{item.title}</li>)}
+            </div>
+        }
       </>
     );
 }
