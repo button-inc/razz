@@ -3,6 +3,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const axios = require("axios")
 const tough = require("tough-cookie");
+const path = require("path")
 
 dotenv.config();
 
@@ -12,6 +13,10 @@ const port = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// serve up production assets
+app.use(express.static('client/build'));
+
 
 const Cookie = tough.Cookie;
 const cookiejar = new tough.CookieJar();
@@ -54,9 +59,9 @@ app.get("/auth/exchange/", (req, res, next) => {
       function (err, cookie) {
         if (err) {
           console.log('err', err)
-          res.redirect('http://localhost:5173/')
+          res.redirect('http://localhost:3001/')
         }
-        res.redirect('http://localhost:5173/dashboard')
+        res.redirect('http://localhost:3001/dashboard')
       }
     );
 
@@ -74,7 +79,7 @@ app.get("/github/repo", (req, res) => {
   cookiejar.getCookies("http://localhost:3001/", function (err, cookies) {
     if (err) {
       console.log('error retrieving cookie', err)
-      res.redirect('http://localhost:5173/')
+      res.redirect('http://localhost:3001/')
     }
 
     const token = cookies[0].value;
@@ -96,10 +101,9 @@ app.get("/github/repo", (req, res) => {
     })
     .catch(err => {
       console.log('error fetching repos: ', err)
-      res.redirect('http://localhost:5173/')
+      res.redirect('http://localhost:3001/')
     })
-});
-
+  });
 })
 
 app.get("/github/issues", (req, res) => {
@@ -123,6 +127,11 @@ app.get("/github/issues", (req, res) => {
   //     return container;
   // })
 })
+
+// serve up the index.html if express doesnt recognize the route
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+});
 
 app.listen(port, function () {
   console.log("Runnning on " + port);
