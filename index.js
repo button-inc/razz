@@ -162,6 +162,7 @@ app.get('/github/issues/:repo', (req, res) => {
 
 // serve up the index.html if express doesnt recognize the route
 app.get('*', (req, res) => {
+  console.log(process.env.BASE_URL)
   res.sendFile(
     path.resolve(__dirname, 'client', 'build', 'index.html')
   );
