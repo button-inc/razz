@@ -56,13 +56,25 @@ button:active {
   transform: translateY(1px);
 }
 
+a:link { text-decoration: none;}
+
+a:visited {
+  text-decoration: none;
+}
+
+a:hover { text-decoration: none; }
+
+a:active { text-decoration: none; }
+
+
+
 .login {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.login-button {
+.link-button {
   display: flex;
   text-align: center;
   padding: 1rem;
@@ -71,22 +83,28 @@ button:active {
   color: white;
 }
 
-.login-button:hover {
+.link-button:hover {
   box-shadow: 0 0px 1px hsla(0, 0%, 0%, 0.6), 0 1px 2px hsla(0, 0%, 0%, 0.2);
 }
 
-#homepage{
+.centerpage{
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-#homepage h1{
+.centerpage h1{
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 5rem;
   font-weight: 900;
+}
+
+.centerpage h2{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .navigation {
@@ -108,18 +126,6 @@ button:active {
   color: hsl(224, 98%, 58%);
   font-weight: 900;
 }
-
-a:link { text-decoration: none;}
-
-a:visited {
-  text-decoration: none;
-}
-
-a:hover { text-decoration: none; }
-
-a:active { text-decoration: none; }
-
-
 
 #contact h1 {
   display: flex;
@@ -203,7 +209,7 @@ form[action$="destroy"] button {
   padding-bottom: 1rem;
   border-bottom: 1px solid #e3e3e3;
 }
-
+x
 #sidebar > div form {
   position: relative;
 }

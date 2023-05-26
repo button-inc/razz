@@ -1,32 +1,31 @@
-const express = require('express');
+const express = require("express");
+const ViteExpress = require("vite-express");
 const cors = require('cors');
 const dotenv = require('dotenv');
 const axios = require('axios');
 const tough = require('tough-cookie');
-const path = require('path');
-
 dotenv.config();
 
+const port = process.env.PORT || 3000;
+const baseurl = process.env.BASE_URL || 'http://localhost:3000/';
+const mode = process.env.VITE_MODE || 'development';
+
 const app = express();
-const port = process.env.PORT || 3001;
-const baseurl = process.env.BASE_URL || 'http://localhost:3001/';
+ViteExpress.config({ mode: {mode}})
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// serve up production assets
-app.use(express.static('client/build'));
-
 const { Cookie } = tough;
 const cookiejar = new tough.CookieJar();
 
-app.get('/', (req, res) => {
-  res.send({ express: 'express backend' });
+app.get("/hello", (req, res) => {
+  res.send("Hello Vite + React!");
 });
 
 app.post('/auth/login', (req, res) => {
-  const location = `https://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}`;
+  const location = `https://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}&redirect_uri=${baseurl}auth/exchange/`;
   res.redirect(location);
 });
 
@@ -116,7 +115,6 @@ app.get('/github/repo', (req, res) => {
       .then((response) => {
         const { data } = response;
         const repos = data.map((repo) => repo.full_name);
-        console.log(repos);
         res.send(repos);
       })
       .catch((error) => {
@@ -126,49 +124,6 @@ app.get('/github/repo', (req, res) => {
   });
 });
 
-app.get('/github/issues/:repo', (req, res) => {
-  const repo = req.params;
-
-  // get the token cookie
-  cookiejar.getCookies(baseurl, (err, cookies) => {
-    if (err) {
-      res.redirect(baseurl);
-    }
-
-    const token = cookies[0].value;
-    // get repos from github using token
-    axios
-      .get(
-        `https://api.github.com/repos/${repo}/issues`,
-        {
-          headers: {
-            Accept: 'application/vnd.github+json',
-            Authorization: `Bearer ${token}`,
-            'X-GitHub-Api-Version': '2022-11-28',
-          },
-        }
-      )
-      .then((response) => {
-        const { data } = response;
-        const issues = data.map((issue) => issue.title);
-        res.send(issues);
-      })
-      .catch((error) => {
-        console.log('error fetching issues: ', error);
-        res.redirect(baseurl);
-      });
-  });
-});
-
-// serve up the index.html if express doesnt recognize the route
-app.get('*', (req, res) => {
-  console.log(process.env.BASE_URL)
-  res.sendFile(
-    path.resolve(__dirname, 'client', 'build', 'index.html')
-  );
-});
-
-app.listen(port, () => {
-  console.log(`Runnning on ${port}`);
-});
-module.exports = app;
+ViteExpress.listen(app, port, () =>
+  console.log(`Server is listening on port ${port}...`)
+);

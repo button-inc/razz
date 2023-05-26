@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
+
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ErrorPage from "./error-page";
 import Dashboard, {loader as dashboardLoader} from "./routes/dashboard";
@@ -17,14 +18,12 @@ const router = createBrowserRouter([
     path: "dashboard/",
     element: <Dashboard />,
     errorElement: <ErrorPage />,
-    loader: dashboardLoader,
-    children: [
-      {
-        path: "dashboard/repos/",
-        element: <Repos />,
-        loader: reposLoader,
-      }
-    ]
+    loader: dashboardLoader
+  },
+  {
+    path: "repos/",
+    element: <Repos />,
+    loader: reposLoader,
   },
 ]);
 
