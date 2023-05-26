@@ -2,11 +2,10 @@ import Navbar from "../components/navbar";
 
 export default function Dashboard() {
   const getRepos = async () => {
-    const response = await fetch("http://localhost:3001/github/repo", {
+    const response = await fetch("/github/repo", {
       method: "GET",
     });
     const data = await response.json();
-
     console.log(data);
   };
 
