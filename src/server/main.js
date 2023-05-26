@@ -11,7 +11,7 @@ const baseurl = process.env.BASE_URL || 'http://localhost:3000/';
 const mode = process.env.VITE_MODE || 'development';
 
 const app = express();
-ViteExpress.config({ mode: {mode}})
+ViteExpress.config({ mode: mode})
 
 app.use(cors());
 app.use(express.json());
@@ -100,7 +100,6 @@ app.get('/github/repo', (req, res) => {
     }
 
     const token = cookies[0].value;
-    // get repos from github using token
     axios
       .get(
         'https://api.github.com/user/repos?affiliation=collaborator&per_page=100',
@@ -116,6 +115,37 @@ app.get('/github/repo', (req, res) => {
         const { data } = response;
         const repos = data.map((repo) => repo.full_name);
         res.send(repos);
+      })
+      .catch((error) => {
+        console.log('error fetching repos: ', error);
+        res.redirect(baseurl);
+      });
+  });
+});
+
+app.get('/github/issues', (req, res) => {
+  const { owner, repo } = req.query;
+
+  cookiejar.getCookies(baseurl, (err, cookies) => {
+    if (err) {
+      res.redirect(baseurl);
+    }
+
+    const token = cookies[0].value;
+    axios
+      .get(
+        `https://api.github.com/repos/${owner}/${repo}/issues`,
+        {
+          headers: {
+            Accept: 'application/vnd.github+json',
+            Authorization: `Bearer ${token}`,
+            'X-GitHub-Api-Version': '2022-11-28',
+          },
+        }
+      )
+      .then((response) => {
+        const { data } = response;
+        res.send(data);
       })
       .catch((error) => {
         console.log('error fetching repos: ', error);
