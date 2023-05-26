@@ -6,10 +6,12 @@ const axios = require('axios');
 const tough = require('tough-cookie');
 dotenv.config();
 
-const app = express();
-
 const port = process.env.PORT || 3000;
 const baseurl = process.env.BASE_URL || 'http://localhost:3000/';
+const mode = process.env.VITE_MODE || 'development';
+
+const app = express();
+ViteExpress.config({ mode: {mode}})
 
 app.use(cors());
 app.use(express.json());
