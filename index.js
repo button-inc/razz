@@ -3,15 +3,21 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const axios = require("axios")
 const tough = require("tough-cookie");
+const path = require("path")
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3001;
+const baseurl = process.env.BASE_URL || 'http://localhost:3001/'
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// serve up production assets
+app.use(express.static('client/build'));
+
 
 const Cookie = tough.Cookie;
 const cookiejar = new tough.CookieJar();
@@ -50,16 +56,15 @@ app.get("/auth/exchange/", (req, res, next) => {
 
     cookiejar.setCookie(
       cookie,
-      "http://localhost:3001/",
+      baseurl,
       function (err, cookie) {
         if (err) {
           console.log('err', err)
-          res.redirect('http://localhost:5173/')
+          res.redirect(baseurl)
         }
-        res.redirect('http://localhost:5173/dashboard')
+        res.redirect(`${baseurl}dashboard`)
       }
     );
-
   })
   .catch(error => {
     // TODO: handle errors
@@ -69,12 +74,11 @@ app.get("/auth/exchange/", (req, res, next) => {
 })
 
 app.get("/github/repo", (req, res) => {
-  console.log('/github/repo')
   // get the token cookie
-  cookiejar.getCookies("http://localhost:3001/", function (err, cookies) {
+  cookiejar.getCookies(baseurl, function (err, cookies) {
     if (err) {
       console.log('error retrieving cookie', err)
-      res.redirect('http://localhost:5173/')
+      res.redirect(baseurl)
     }
 
     const token = cookies[0].value;
@@ -96,33 +100,15 @@ app.get("/github/repo", (req, res) => {
     })
     .catch(err => {
       console.log('error fetching repos: ', err)
-      res.redirect('http://localhost:5173/')
+      res.redirect(baseurl)
     })
+  });
+})
+
+// serve up the index.html if express doesnt recognize the route
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
 });
-
-})
-
-app.get("/github/issues", (req, res) => {
-  // axios.get(`https://api.github.com/repos/${repo}/issues`, {
-  //   method: "GET",
-  //   headers: {
-  //       "Accept": "application/vnd.github+json",
-  //       "Authorization": `Bearer ${token.token}`,
-  //       "X-GitHub-Api-Version": "2022-11-28",
-  //   }
-  // })
-  // const data = response.json()
-
-  // const issues = data.map((item) => {
-  //     const container = {};
-
-  //     container.title = item.title;
-  //     container.number = item.number;
-  //     container.url = item.url;
-
-  //     return container;
-  // })
-})
 
 app.listen(port, function () {
   console.log("Runnning on " + port);
