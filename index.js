@@ -63,6 +63,36 @@ app.get('/auth/exchange/', (req, res, next) => {
     });
 });
 
+app.get('/github/user', (req,res) => {
+  cookiejar.getCookies(baseurl, (err, cookies) => {
+    if (err) {
+      res.redirect(baseurl);
+    }
+
+    const token = cookies[0].value;
+    // get repos from github using token
+    axios
+      .get(
+        'https://api.github.com/user',
+        {
+          headers: {
+            Accept: 'application/vnd.github+json',
+            Authorization: `Bearer ${token}`,
+            'X-GitHub-Api-Version': '2022-11-28',
+          },
+        }
+      )
+      .then((response) => {
+        const { data } = response;
+        res.send(data);
+      })
+      .catch((error) => {
+        console.log('error fetching user: ', error);
+        res.redirect(baseurl);
+      });
+  });
+});
+
 app.get('/github/repo', (req, res) => {
   // get the token cookie
   cookiejar.getCookies(baseurl, (err, cookies) => {
@@ -86,6 +116,7 @@ app.get('/github/repo', (req, res) => {
       .then((response) => {
         const { data } = response;
         const repos = data.map((repo) => repo.full_name);
+        console.log(repos);
         res.send(repos);
       })
       .catch((error) => {
@@ -95,8 +126,43 @@ app.get('/github/repo', (req, res) => {
   });
 });
 
+app.get('/github/issues/:repo', (req, res) => {
+  const repo = req.params;
+
+  // get the token cookie
+  cookiejar.getCookies(baseurl, (err, cookies) => {
+    if (err) {
+      res.redirect(baseurl);
+    }
+
+    const token = cookies[0].value;
+    // get repos from github using token
+    axios
+      .get(
+        `https://api.github.com/repos/${repo}/issues`,
+        {
+          headers: {
+            Accept: 'application/vnd.github+json',
+            Authorization: `Bearer ${token}`,
+            'X-GitHub-Api-Version': '2022-11-28',
+          },
+        }
+      )
+      .then((response) => {
+        const { data } = response;
+        const issues = data.map((issue) => issue.title);
+        res.send(issues);
+      })
+      .catch((error) => {
+        console.log('error fetching issues: ', error);
+        res.redirect(baseurl);
+      });
+  });
+});
+
 // serve up the index.html if express doesnt recognize the route
 app.get('*', (req, res) => {
+  console.log(process.env.BASE_URL)
   res.sendFile(
     path.resolve(__dirname, 'client', 'build', 'index.html')
   );
