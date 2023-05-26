@@ -1,5 +1,5 @@
 import Navbar from "../components/navbar";
-import { useLoaderData, Link, Outlet } from "react-router-dom";
+import { useLoaderData, Link } from "react-router-dom";
 
 export function loader () {
   return fetch("/github/user");
@@ -18,11 +18,8 @@ export default function Dashboard() {
             <h2>{`Welcome ${user.name}`}</h2>
           }
           <div className="login">
-            <Link className="login-button" to={"dashboard/repos"}> My GitHub Repositories </Link>
+            <Link className="link-button" to={"/repos"}> My GitHub Repositories </Link>
           </div>
-        </div>
-        <div>
-          <Outlet />
         </div>
       </div>
     </>

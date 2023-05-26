@@ -5,7 +5,7 @@ export default function HomePage() {
   return (
     <>
       <Navbar />
-      <div classname="centerpage">
+      <div className="centerpage">
         <div>
           <h1>razz.vote</h1>
           <h2>consensus-based estimation for your GitHub issues</h2>

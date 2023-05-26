@@ -18,14 +18,12 @@ const router = createBrowserRouter([
     path: "dashboard/",
     element: <Dashboard />,
     errorElement: <ErrorPage />,
-    loader: dashboardLoader,
-    children: [
-      {
-        path: "dashboard/repos/",
-        element: <Repos />,
-        loader: reposLoader,
-      }
-    ]
+    loader: dashboardLoader
+  },
+  {
+    path: "repos/",
+    element: <Repos />,
+    loader: reposLoader,
   },
 ]);
 

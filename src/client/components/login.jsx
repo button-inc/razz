@@ -4,7 +4,7 @@ export default function Login() {
   return (
     <>
       <form action={URL} method="POST">
-        <input type="submit" value="Login with Github" />
+        <input className="link-button" type="submit" value="Login with Github" />
       </form>
     </>
   );
