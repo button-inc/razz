@@ -4,9 +4,11 @@ import "./index.css";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ErrorPage from "./error-page";
-import Dashboard, {loader as dashboardLoader} from "./routes/dashboard";
+import User, {loader as userLoader} from "./routes/user";
 import HomePage from "./routes/homepage";
-import Repos, {loader as reposLoader } from "./components/repos";
+import Repos, {loader as reposLoader } from "./routes/repos";
+import Issues, {loader as issuesLoader } from "./routes/issues";
+import Issue, {loader as issueLoader } from "./routes/issue";
 
 const router = createBrowserRouter([
   {
@@ -15,15 +17,27 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: "dashboard/",
-    element: <Dashboard />,
+    path: "user/",
+    element: <User />,
     errorElement: <ErrorPage />,
-    loader: dashboardLoader
+    loader: userLoader
   },
   {
     path: "repos/",
     element: <Repos />,
     loader: reposLoader,
+  },
+  {
+    path: "vote/:owner/:repo",
+    element: <Issues />,
+    loader: issuesLoader,
+    children: [
+      {
+        path: "issue/:issue",
+        element: <Issue />,
+        loader: issueLoader
+      }
+    ]
   },
 ]);
 

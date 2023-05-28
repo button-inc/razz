@@ -5,7 +5,7 @@ export function loader () {
   return fetch("/github/user");
 }
 
-export default function Dashboard() {
+export default function User() {
   const user = useLoaderData();
 
   return (
@@ -13,7 +13,6 @@ export default function Dashboard() {
       <Navbar />
       <div className="centerpage">
         <div>
-          <h1> Dashboard </h1>
           {user?.name &&
             <h2>{`Welcome ${user.name}`}</h2>
           }

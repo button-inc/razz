@@ -66,6 +66,16 @@ a:hover { text-decoration: none; }
 
 a:active { text-decoration: none; }
 
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+.container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
 
 
 .login {
@@ -168,7 +178,6 @@ form[action$="destroy"] button {
 }
 
 
-
 #sidebar {
   width: 22rem;
   background-color: #f7f7f7;
@@ -209,7 +218,7 @@ form[action$="destroy"] button {
   padding-bottom: 1rem;
   border-bottom: 1px solid #e3e3e3;
 }
-x
+
 #sidebar > div form {
   position: relative;
 }
