@@ -157,10 +157,6 @@ app.get('/github/issues', (req, res) => {
 app.get('/github/issue', (req, res) => {
   const { owner, repo, issue_number } = req.query;
 
-  console.log(owner)
-  console.log(repo)
-  console.log(issue_number)
-
   cookiejar.getCookies(baseurl, (err, cookies) => {
     if (err) {
       res.redirect(baseurl);

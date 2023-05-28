@@ -7,7 +7,6 @@ export function loader({ params }) {
 
 export default function Issue() {
     const issue = useLoaderData();
-    console.log('issue')
 
     const getIssue = () => {
         return (
@@ -15,8 +14,8 @@ export default function Issue() {
                 {issue.title}
                 {issue.body}
             </div>
-        )
-    }
+        );
+    };
 
     // issue.number
     // issue.title
