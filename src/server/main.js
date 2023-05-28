@@ -53,7 +53,7 @@ app.get('/auth/exchange/', (req, res, next) => {
         if (err) {
           res.redirect(baseurl);
         }
-        res.redirect(`${baseurl}dashboard`);
+        res.redirect(`${baseurl}user`);
       });
     })
     .catch((error) => {
@@ -135,6 +135,41 @@ app.get('/github/issues', (req, res) => {
     axios
       .get(
         `https://api.github.com/repos/${owner}/${repo}/issues`,
+        {
+          headers: {
+            Accept: 'application/vnd.github+json',
+            Authorization: `Bearer ${token}`,
+            'X-GitHub-Api-Version': '2022-11-28',
+          },
+        }
+      )
+      .then((response) => {
+        const { data } = response;
+        res.send(data);
+      })
+      .catch((error) => {
+        console.log('error fetching repos: ', error);
+        res.redirect(baseurl);
+      });
+  });
+});
+
+app.get('/github/issue', (req, res) => {
+  const { owner, repo, issue_number } = req.query;
+
+  console.log(owner)
+  console.log(repo)
+  console.log(issue_number)
+
+  cookiejar.getCookies(baseurl, (err, cookies) => {
+    if (err) {
+      res.redirect(baseurl);
+    }
+
+    const token = cookies[0].value;
+    axios
+      .get(
+        `https://api.github.com/repos/${owner}/${repo}/issues/${issue_number}`,
         {
           headers: {
             Accept: 'application/vnd.github+json',

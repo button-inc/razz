@@ -17,7 +17,7 @@ export default function Repos() {
     repos.forEach((repo, index) => {
       reposList.push(
         <li key={index}>
-          <Link to={`/issues/${repo}`}>{repo}</Link>
+          <Link to={`/vote/${repo}`}>{repo}</Link>
         </li>
       );
     });

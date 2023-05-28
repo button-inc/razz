@@ -1,4 +1,4 @@
-import { useLoaderData, Link } from "react-router-dom";
+import { useLoaderData, Link, Outlet } from "react-router-dom";
 import Navbar from "../components/navbar";
 
 export function loader({ params }) {
@@ -16,19 +16,11 @@ export default function Issues() {
     issues.forEach((issue, index) => {
       issuesList.push(
         <li key={index}>
-          <div>
+          <Link to={`issue/${issue.number}`}>
             {issue.number} {issue.title}
-          </div>
-          <p>{index.body}</p>
+          </Link>
         </li>
       );
-      // issue.number
-      // issue.title
-      // issue.body
-      // issue.url
-      // issue.state "open"
-      // issue.milestone
-      // issue.labels []
     });
     return issuesList;
   };
@@ -36,12 +28,38 @@ export default function Issues() {
   return (
     <>
       <Navbar />
-      <div className="centerpage">
+      <div id="sidebar">
+        <h1>GitHub Issues</h1>
         <div>
-          <h1>GitHub Issues</h1>
-          <ul>{listIssues()}</ul>
+          <form id="search-form" role="search">
+            <input
+              id="q"
+              aria-label="Search contacts"
+              placeholder="Search"
+              type="search"
+              name="q"
+            />
+            <div
+              id="search-spinner"
+              aria-hidden
+              hidden={true}
+            />
+            <div
+              className="sr-only"
+              aria-live="polite"
+            ></div>
+          </form>
         </div>
+        <nav>
+          <ul>
+            {listIssues()}
+          </ul>
+        </nav>
       </div>
+      <div id="detail">
+        <Outlet />
+      </div>
+
     </>
   );
 }
