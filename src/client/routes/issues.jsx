@@ -11,7 +11,9 @@ export default function Issues() {
   const listIssues = () => {
     const issuesList = [];
 
-    if (issues.length < 1) {return null};
+    if (issues.length < 1) {
+      return null;
+    }
 
     issues.forEach((issue, index) => {
       issuesList.push(
@@ -40,21 +42,12 @@ export default function Issues() {
                 type="search"
                 name="q"
               />
-              <div
-                id="search-spinner"
-                aria-hidden
-                hidden={true}
-              />
-              <div
-                className="sr-only"
-                aria-live="polite"
-              ></div>
+              <div id="search-spinner" aria-hidden hidden={true} />
+              <div className="sr-only" aria-live="polite"></div>
             </form>
           </div>
           <nav>
-            <ul>
-              {listIssues()}
-            </ul>
+            <ul>{listIssues()}</ul>
           </nav>
         </div>
         <div id="detail">

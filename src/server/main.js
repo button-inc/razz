@@ -1,17 +1,17 @@
 const express = require("express");
 const ViteExpress = require("vite-express");
-const cors = require('cors');
-const dotenv = require('dotenv');
-const axios = require('axios');
-const tough = require('tough-cookie');
+const cors = require("cors");
+const dotenv = require("dotenv");
+const axios = require("axios");
+const tough = require("tough-cookie");
 dotenv.config();
 
 const port = process.env.PORT || 3000;
-const baseurl = process.env.BASE_URL || 'http://localhost:3000/';
-const mode = process.env.VITE_MODE || 'development';
+const baseurl = process.env.BASE_URL || "http://localhost:3000/";
+const mode = process.env.VITE_MODE || "development";
 
 const app = express();
-ViteExpress.config({ mode: mode})
+ViteExpress.config({ mode: mode });
 
 app.use(cors());
 app.use(express.json());
@@ -24,12 +24,12 @@ app.get("/hello", (req, res) => {
   res.send("Hello Vite + React!");
 });
 
-app.post('/auth/login', (req, res) => {
+app.post("/auth/login", (req, res) => {
   const location = `https://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}&redirect_uri=${baseurl}auth/exchange/`;
   res.redirect(location);
 });
 
-app.get('/auth/exchange/', (req, res, next) => {
+app.get("/auth/exchange/", (req, res, next) => {
   const { code } = req.query;
   // env params to request access token
   const params = {
@@ -40,13 +40,13 @@ app.get('/auth/exchange/', (req, res, next) => {
 
   // request access token
   axios
-    .post('https://github.com/login/oauth/access_token', params, {
+    .post("https://github.com/login/oauth/access_token", params, {
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     })
     .then((response) => {
-      const token = new URLSearchParams(response.data).get('access_token');
+      const token = new URLSearchParams(response.data).get("access_token");
       const cookie = Cookie.parse(`token=${token}`);
 
       cookiejar.setCookie(cookie, baseurl, (err, cookie) => {
@@ -62,7 +62,7 @@ app.get('/auth/exchange/', (req, res, next) => {
     });
 });
 
-app.get('/github/user', (req,res) => {
+app.get("/github/user", (req, res) => {
   cookiejar.getCookies(baseurl, (err, cookies) => {
     if (err) {
       res.redirect(baseurl);
@@ -71,28 +71,25 @@ app.get('/github/user', (req,res) => {
     const token = cookies[0].value;
     // get repos from github using token
     axios
-      .get(
-        'https://api.github.com/user',
-        {
-          headers: {
-            Accept: 'application/vnd.github+json',
-            Authorization: `Bearer ${token}`,
-            'X-GitHub-Api-Version': '2022-11-28',
-          },
-        }
-      )
+      .get("https://api.github.com/user", {
+        headers: {
+          Accept: "application/vnd.github+json",
+          Authorization: `Bearer ${token}`,
+          "X-GitHub-Api-Version": "2022-11-28",
+        },
+      })
       .then((response) => {
         const { data } = response;
         res.send(data);
       })
       .catch((error) => {
-        console.log('error fetching user: ', error);
+        console.log("error fetching user: ", error);
         res.redirect(baseurl);
       });
   });
 });
 
-app.get('/github/repo', (req, res) => {
+app.get("/github/repo", (req, res) => {
   // get the token cookie
   cookiejar.getCookies(baseurl, (err, cookies) => {
     if (err) {
@@ -102,12 +99,12 @@ app.get('/github/repo', (req, res) => {
     const token = cookies[0].value;
     axios
       .get(
-        'https://api.github.com/user/repos?affiliation=collaborator&per_page=100',
+        "https://api.github.com/user/repos?affiliation=collaborator&per_page=100",
         {
           headers: {
-            Accept: 'application/vnd.github+json',
+            Accept: "application/vnd.github+json",
             Authorization: `Bearer ${token}`,
-            'X-GitHub-Api-Version': '2022-11-28',
+            "X-GitHub-Api-Version": "2022-11-28",
           },
         }
       )
@@ -117,13 +114,13 @@ app.get('/github/repo', (req, res) => {
         res.send(repos);
       })
       .catch((error) => {
-        console.log('error fetching repos: ', error);
+        console.log("error fetching repos: ", error);
         res.redirect(baseurl);
       });
   });
 });
 
-app.get('/github/issues', (req, res) => {
+app.get("/github/issues", (req, res) => {
   const { owner, repo } = req.query;
 
   cookiejar.getCookies(baseurl, (err, cookies) => {
@@ -133,28 +130,25 @@ app.get('/github/issues', (req, res) => {
 
     const token = cookies[0].value;
     axios
-      .get(
-        `https://api.github.com/repos/${owner}/${repo}/issues`,
-        {
-          headers: {
-            Accept: 'application/vnd.github+json',
-            Authorization: `Bearer ${token}`,
-            'X-GitHub-Api-Version': '2022-11-28',
-          },
-        }
-      )
+      .get(`https://api.github.com/repos/${owner}/${repo}/issues`, {
+        headers: {
+          Accept: "application/vnd.github+json",
+          Authorization: `Bearer ${token}`,
+          "X-GitHub-Api-Version": "2022-11-28",
+        },
+      })
       .then((response) => {
         const { data } = response;
         res.send(data);
       })
       .catch((error) => {
-        console.log('error fetching repos: ', error);
+        console.log("error fetching repos: ", error);
         res.redirect(baseurl);
       });
   });
 });
 
-app.get('/github/issue', (req, res) => {
+app.get("/github/issue", (req, res) => {
   const { owner, repo, issue_number } = req.query;
 
   cookiejar.getCookies(baseurl, (err, cookies) => {
@@ -168,9 +162,9 @@ app.get('/github/issue', (req, res) => {
         `https://api.github.com/repos/${owner}/${repo}/issues/${issue_number}`,
         {
           headers: {
-            Accept: 'application/vnd.github+json',
+            Accept: "application/vnd.github+json",
             Authorization: `Bearer ${token}`,
-            'X-GitHub-Api-Version': '2022-11-28',
+            "X-GitHub-Api-Version": "2022-11-28",
           },
         }
       )
@@ -179,7 +173,7 @@ app.get('/github/issue', (req, res) => {
         res.send(data);
       })
       .catch((error) => {
-        console.log('error fetching repos: ', error);
+        console.log("error fetching repos: ", error);
         res.redirect(baseurl);
       });
   });

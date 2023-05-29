@@ -56,15 +56,21 @@ button:active {
   transform: translateY(1px);
 }
 
-a:link { text-decoration: none;}
+a:link {
+  text-decoration: none;
+}
 
 a:visited {
   text-decoration: none;
 }
 
-a:hover { text-decoration: none; }
+a:hover {
+  text-decoration: none;
+}
 
-a:active { text-decoration: none; }
+a:active {
+  text-decoration: none;
+}
 
 #root {
   height: 100%;
@@ -76,7 +82,6 @@ a:active { text-decoration: none; }
   height: 100%;
   width: 100%;
 }
-
 
 .login {
   display: flex;
@@ -91,19 +96,25 @@ a:active { text-decoration: none; }
   background-color: hsl(224, 98%, 58%);
   border-radius: 5px;
   color: white;
+  cursor: pointer;
 }
 
 .link-button:hover {
   box-shadow: 0 0px 1px hsla(0, 0%, 0%, 0.6), 0 1px 2px hsla(0, 0%, 0%, 0.2);
 }
 
-.centerpage{
+.link-button:active {
+  box-shadow: 0 0px 1px hsla(0, 0%, 0%, 0.4);
+  transform: translateY(1px);
+}
+
+.centerpage {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.centerpage h1{
+.centerpage h1 {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -111,7 +122,7 @@ a:active { text-decoration: none; }
   font-weight: 900;
 }
 
-.centerpage h2{
+.centerpage h2 {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -176,7 +187,6 @@ form[action$="destroy"] button {
   white-space: nowrap;
   border-width: 0;
 }
-
 
 #sidebar {
   width: 22rem;
