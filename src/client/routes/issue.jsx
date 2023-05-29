@@ -14,6 +14,19 @@ export function loader({ params }) {
 export default function Issue() {
   const issue = useLoaderData();
 
+  const votingOptions = [
+    "0",
+    "1",
+    "3",
+    "5",
+    "8",
+    "13",
+    "21",
+    "34",
+    "?",
+    "coffee",
+  ];
+
   const getIssue = () => {
     console.log(issue);
     return (
