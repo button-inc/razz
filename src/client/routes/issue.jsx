@@ -4,6 +4,7 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import React from "react";
 import ReactMarkdown from "react-markdown";
+import Vote from "../components/vote";
 
 export function loader({ params }) {
   return fetch(
@@ -11,21 +12,10 @@ export function loader({ params }) {
   );
 }
 
+
+
 export default function Issue() {
   const issue = useLoaderData();
-
-  const votingOptions = [
-    "0",
-    "1",
-    "3",
-    "5",
-    "8",
-    "13",
-    "21",
-    "34",
-    "?",
-    "coffee",
-  ];
 
   const getIssue = () => {
     console.log(issue);

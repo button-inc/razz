@@ -179,6 +179,12 @@ app.get("/github/issue", (req, res) => {
   });
 });
 
+app.get("/submitvote", (req, res) => {
+  const { vote } = req.query;
+  console.log('/submitvote', vote)
+  res.send(vote);
+})
+
 ViteExpress.listen(app, port, () =>
   console.log(`Server is listening on port ${port}...`)
 );
