@@ -21,7 +21,7 @@ export default function User() {
             </Link>
           </div>
         </div>
-      </div>ß
+      </div>
     </>
   );
 }
