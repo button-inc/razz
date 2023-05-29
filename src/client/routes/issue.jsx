@@ -1,7 +1,6 @@
 import { useLoaderData } from "react-router-dom";
 
 export function loader({ params }) {
-  console.log(params);
   return fetch(
     `/github/issue?owner=${params.owner}&repo=${params.repo}&issue_number=${params.issue}`
   );

@@ -25,16 +25,19 @@ const router = createBrowserRouter([
   {
     path: "repos/",
     element: <Repos />,
+    errorElement: <ErrorPage />,
     loader: reposLoader,
   },
   {
     path: "vote/:owner/:repo",
     element: <Issues />,
+    errorElement: <ErrorPage />,
     loader: issuesLoader,
     children: [
       {
         path: "issue/:issue",
         element: <Issue />,
+        errorElement: <ErrorPage />,
         loader: issueLoader,
       },
     ],
