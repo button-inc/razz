@@ -7,8 +7,7 @@ export default function HomePage() {
       <Navbar />
       <div className="centerpage">
         <div>
-          <h1>razz.vote</h1>
-          <h2>consensus-based estimation for your GitHub issues</h2>
+          <h2>Consensus-based estimation for your GitHub issues</h2>
           <div className="login">
             <Login />
           </div>
