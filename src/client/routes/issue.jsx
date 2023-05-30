@@ -2,9 +2,29 @@ import { useLoaderData } from "react-router-dom";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import React from "react";
+import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
-import Vote from "../components/vote";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import FormLabel from "@mui/material/FormLabel";
+import { Button } from "@mui/material";
+
+const URL = import.meta.env.BASE_URL + "submitvote";
+
+const votingOptions = [
+    "0",
+    "1",
+    "3",
+    "5",
+    "8",
+    "13",
+    "21",
+    "34",
+    "?",
+    "coffee",
+];
 
 export function loader({ params }) {
   return fetch(
@@ -12,13 +32,11 @@ export function loader({ params }) {
   );
 }
 
-
-
 export default function Issue() {
   const issue = useLoaderData();
+  const [vote, setVote] = useState();
 
   const getIssue = () => {
-    console.log(issue);
     return (
       <>
         <Card sx={{ minWidth: 275 }}>
@@ -41,10 +59,53 @@ export default function Issue() {
     );
   };
 
+  const getVotingButtons = () => {
+      const votingButtons = [];
+
+      {
+        votingOptions.forEach((value, index) => {
+          votingButtons.push(
+            <FormControlLabel
+              key={index}
+              value={value}
+              control={<Radio />}
+              label={value}
+            />
+          );
+        });
+      }
+      return votingButtons;
+  };
+
+  const handleChange = (event) => {
+    setVote(event.target.value);
+  };
+
   return (
     <>
       <h2>Repository name</h2>
       <div>{getIssue()}</div>
+      <FormControl>
+          <FormLabel id="demo-controlled-radio-buttons-group">
+            Select repo to import
+          </FormLabel>
+          <RadioGroup
+            row
+            aria-labelledby="demo-controlled-radio-buttons-group"
+            name="controlled-radio-buttons-group"
+            value={vote}
+            onChange={handleChange}
+          >
+            {getVotingButtons()}
+          </RadioGroup>
+        </FormControl>
+        {/* TODO: disabled until a repo is selected */}
+      <div className="centerpage">
+        <Button>
+        {" "}
+          Submit Vote{" "}
+        </Button>
+      </div>
     </>
   );
 }
