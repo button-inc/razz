@@ -93,9 +93,9 @@ a:active {
   display: flex;
   text-align: center;
   padding: 1rem;
-  background-color: hsl(224, 98%, 58%);
+  background-color: black;
   border-radius: 5px;
-  color: white;
+  color: #fafafa;
   cursor: pointer;
 }
 
@@ -135,16 +135,14 @@ a:active {
   align-items: center;
   position: relative;
   padding: 0.5rem 0rem;
-  background-color: #fff;
-  color: black;
-  box-shadow: 0 2px 2px 2px rgba(9, 9, 9, 0.23);
+  background-color: #fafafa;
 }
 
 .brand {
   margin: 3rem;
   font-size: 2rem;
   text-decoration: none;
-  color: hsl(224, 98%, 58%);
+  color: black;
   font-weight: 900;
 }
 
@@ -190,7 +188,7 @@ form[action$="destroy"] button {
 
 #sidebar {
   width: 22rem;
-  background-color: #f7f7f7;
+  background-color: #fafafa;
   border-right: solid 1px #e3e3e3;
   display: flex;
   flex-direction: column;

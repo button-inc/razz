@@ -17,7 +17,7 @@ export default function User() {
           <div className="login">
             <Link className="link-button" to={"/repos"}>
               {" "}
-              My GitHub Repositories{" "}
+              Import GitHub Repositories{" "}
             </Link>
           </div>
         </div>
