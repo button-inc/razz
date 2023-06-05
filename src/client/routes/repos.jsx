@@ -45,10 +45,8 @@ export default function Repos() {
       <Navbar />
       <div className="centerpage">
         <div className="login">
+          <h2>Select a repo to import</h2>
           <FormControl>
-            <FormLabel id="demo-controlled-radio-buttons-group">
-              Select repo to import
-            </FormLabel>
             <RadioGroup
               aria-labelledby="demo-controlled-radio-buttons-group"
               name="controlled-radio-buttons-group"
