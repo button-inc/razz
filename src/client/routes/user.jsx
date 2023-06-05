@@ -13,11 +13,7 @@ export default function User() {
       <Navbar />
       <div className="centerpage">
         <div className="login">
-          {user?.name && (
-            <p>
-              <h2>{`Welcome ${user.name}`}</h2>
-            </p>
-          )}
+          {user?.name && <h2>{`Welcome ${user.name}`}</h2>}
           <div>
             <Link className="link-button" to={"/repos"}>
               {" "}

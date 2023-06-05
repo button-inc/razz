@@ -179,11 +179,44 @@ app.get("/github/issue", (req, res) => {
   });
 });
 
-app.get("/submitvote", (req, res) => {
-  const { vote } = req.query;
-  console.log('/submitvote', vote)
-  res.send(vote);
-})
+app.post("/submitvote", (req, res) => {
+  const { vote, repo, issue_number } = req.body;
+
+  res.sendStatus(200);
+
+  // token doesn't have permission?
+  // "message": "Resource not accessible by integration",
+  // cookiejar.getCookies(baseurl, (err, cookies) => {
+  //   if (err) {
+  //     res.redirect(baseurl);
+  //   }
+
+  //   const token = cookies[0].value;
+
+  //   axios
+  //     .patch(
+  //       `https://api.github.com/repos/${repo}/issues/${issue_number}`,
+  //       {
+  //         headers: {
+  //           Accept: "application/vnd.github+json",
+  //           Authorization: `Bearer ${token}`,
+  //           "X-GitHub-Api-Version": "2022-11-28",
+  //         },
+  //         data: {
+  //           labels: [`${vote}`]
+  //         }
+  //       }
+  //     )
+  //     .then((response) => {
+  //       console.log(response.json())
+  //       res.sendStatus(200);
+  //     })
+  //     .catch((error) => {
+  //       console.log("error submitting vote: ", error);
+  //       res.redirect(baseurl);
+  //     });
+  // });
+});
 
 ViteExpress.listen(app, port, () =>
   console.log(`Server is listening on port ${port}...`)
