@@ -3,7 +3,7 @@ import Navbar from "../components/navbar";
 
 export default function HomePage() {
   return (
-    <>
+    <div style={{ background: "#fafafa" }}>
       <Navbar />
       <div className="centerpage">
         <div>
@@ -13,6 +13,6 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

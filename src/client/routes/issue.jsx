@@ -1,9 +1,29 @@
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useLocation } from "react-router-dom";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import React from "react";
+import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import { Button } from "@mui/material";
+
+const URL = import.meta.env.BASE_URL + "submitvote/";
+
+const votingOptions = [
+  "0",
+  "1",
+  "3",
+  "5",
+  "8",
+  "13",
+  "21",
+  "34",
+  "?",
+  "coffee",
+];
 
 export function loader({ params }) {
   return fetch(
@@ -13,9 +33,13 @@ export function loader({ params }) {
 
 export default function Issue() {
   const issue = useLoaderData();
+  const [vote, setVote] = useState();
+
+  const pathname = useLocation().pathname.split("/");
+  const reponame = pathname[2] + "/" + pathname[3];
+  const issuenumber = pathname[5];
 
   const getIssue = () => {
-    console.log(issue);
     return (
       <>
         <Card sx={{ minWidth: 275 }}>
@@ -38,10 +62,74 @@ export default function Issue() {
     );
   };
 
+  const getVotingButtons = () => {
+    const votingButtons = [];
+
+    {
+      votingOptions.forEach((value, index) => {
+        votingButtons.push(
+          <FormControlLabel
+            key={index}
+            value={value}
+            control={<Radio />}
+            label={value}
+          />
+        );
+      });
+    }
+    return votingButtons;
+  };
+
+  const handleChange = (event) => {
+    setVote(event.target.value);
+  };
+
+  const handleSubmit = async () => {
+    // if a vote is selected, submit request to backend
+
+    const body = {
+      vote: vote,
+      repo: reponame,
+      issue_number: issuenumber,
+    };
+
+    const resp = await fetch(URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    // redirect
+  };
+
   return (
     <>
-      <h2>Repository name</h2>
+      <h2>{reponame}</h2>
       <div>{getIssue()}</div>
+      <FormControl>
+        <RadioGroup
+          row
+          aria-labelledby="demo-controlled-radio-buttons-group"
+          name="controlled-radio-buttons-group"
+          value={vote}
+          onChange={handleChange}
+        >
+          {getVotingButtons()}
+        </RadioGroup>
+      </FormControl>
+      {/* TODO: disabled until a repo is selected */}
+      <div className="centerpage">
+        <Button
+          onClick={() => {
+            handleSubmit();
+          }}
+        >
+          {" "}
+          Submit Vote{" "}
+        </Button>
+      </div>
     </>
   );
 }

@@ -75,6 +75,7 @@ a:active {
 #root {
   height: 100%;
   width: 100%;
+  background-color: #fafafa;
 }
 
 .container {
@@ -85,8 +86,12 @@ a:active {
 
 .login {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 1rem;
+  border-radius: 10px;
+  background: white;
 }
 
 .link-button {

@@ -29,31 +29,32 @@ export default function Issues() {
 
   return (
     <>
-      <Navbar />
-      <div className="container">
-        <div id="sidebar">
-          <h1>GitHub Issues</h1>
-          <div>
-            <form id="search-form" role="search">
-              <input
-                id="q"
-                aria-label="Search contacts"
-                placeholder="Search"
-                type="search"
-                name="q"
-              />
-              <div id="search-spinner" aria-hidden hidden={true} />
-              <div className="sr-only" aria-live="polite"></div>
-            </form>
+      <Navbar>
+        <div className="container">
+          <div id="sidebar">
+            <h1>GitHub Issues</h1>
+            <div>
+              <form id="search-form" role="search">
+                <input
+                  id="q"
+                  aria-label="Search contacts"
+                  placeholder="Search"
+                  type="search"
+                  name="q"
+                />
+                <div id="search-spinner" aria-hidden hidden={true} />
+                <div className="sr-only" aria-live="polite"></div>
+              </form>
+            </div>
+            <nav>
+              <ul>{listIssues()}</ul>
+            </nav>
           </div>
-          <nav>
-            <ul>{listIssues()}</ul>
-          </nav>
+          <div id="detail">
+            <Outlet />
+          </div>
         </div>
-        <div id="detail">
-          <Outlet />
-        </div>
-      </div>
+      </Navbar>
     </>
   );
 }

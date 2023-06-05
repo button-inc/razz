@@ -44,26 +44,26 @@ export default function Repos() {
     <>
       <Navbar />
       <div className="centerpage">
-        <FormControl>
-          <FormLabel id="demo-controlled-radio-buttons-group">
-            Select repo to import
-          </FormLabel>
-          <RadioGroup
-            aria-labelledby="demo-controlled-radio-buttons-group"
-            name="controlled-radio-buttons-group"
-            value={selectedRepo}
-            onChange={handleChange}
-          >
-            {listRepos()}
-          </RadioGroup>
-        </FormControl>
-      </div>
-      {/* TODO: disabled until a repo is selected */}
-      <div className="centerpage">
-        <Link className="link-button" to={`/vote/${selectedRepo}`}>
-          {" "}
-          Import{" "}
-        </Link>
+        <div className="login">
+          <h2>Select a repo to import</h2>
+          <FormControl>
+            <RadioGroup
+              aria-labelledby="demo-controlled-radio-buttons-group"
+              name="controlled-radio-buttons-group"
+              value={selectedRepo}
+              onChange={handleChange}
+            >
+              {listRepos()}
+            </RadioGroup>
+          </FormControl>
+          <div className="centerpage">
+            {/* TODO: disabled until a repo is selected */}
+            <Link className="link-button" to={`/vote/${selectedRepo}`}>
+              {" "}
+              Import{" "}
+            </Link>
+          </div>
+        </div>
       </div>
     </>
   );
