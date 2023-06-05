@@ -12,9 +12,13 @@ export default function User() {
     <>
       <Navbar />
       <div className="centerpage">
-        <div>
-          {user?.name && <h2>{`Welcome ${user.name}`}</h2>}
-          <div className="login">
+        <div className="login">
+          {user?.name && (
+            <p>
+              <h2>{`Welcome ${user.name}`}</h2>
+            </p>
+          )}
+          <div>
             <Link className="link-button" to={"/repos"}>
               {" "}
               Import GitHub Repositories{" "}
