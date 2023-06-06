@@ -67,6 +67,13 @@ export default function Repos() {
       <div className="centerpage">
         <div className="login">
           <h2>Select a repo to import</h2>
+          <div className="centerpage">
+            {/* TODO: disabled until a repo is selected */}
+            <Link className="link-button" to={`/vote/${selectedRepo}`}>
+              {" "}
+              Import{" "}
+            </Link>
+          </div>
           <FormControl>
             <RadioGroup
               aria-labelledby="demo-controlled-radio-buttons-group"
@@ -77,13 +84,6 @@ export default function Repos() {
               {listRepos()}
             </RadioGroup>
           </FormControl>
-          <div className="centerpage">
-            {/* TODO: disabled until a repo is selected */}
-            <Link className="link-button" to={`/vote/${selectedRepo}`}>
-              {" "}
-              Import{" "}
-            </Link>
-          </div>
         </div>
       </div>
     </>

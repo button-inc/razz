@@ -2,29 +2,25 @@ import { useLoaderData, useLocation } from "react-router-dom";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import { Button } from "@mui/material";
 import PlanningParty from "../components/planningparty";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Modal from "@mui/material/Modal";
+import React, { useState } from "react";
+import TextField from "@mui/material/TextField";
 
-const URL = import.meta.env.BASE_URL + "submitvote/";
-
-const votingOptions = [
-  "0",
-  "1",
-  "3",
-  "5",
-  "8",
-  "13",
-  "21",
-  "34",
-  "?",
-  "coffee",
-];
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 
 export function loader({ params }) {
   return fetch(
@@ -34,7 +30,12 @@ export function loader({ params }) {
 
 export default function Issue() {
   const issue = useLoaderData();
-  const [vote, setVote] = useState();
+  const [name, setName] = useState();
+  const [open, setOpen] = useState(false);
+  const [isStarted, setIsStarted] = useState(false);
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const pathname = useLocation().pathname.split("/");
   const reponame = pathname[2] + "/" + pathname[3];
@@ -63,76 +64,40 @@ export default function Issue() {
     );
   };
 
-  const getVotingButtons = () => {
-    const votingButtons = [];
-
-    {
-      votingOptions.forEach((value, index) => {
-        votingButtons.push(
-          <FormControlLabel
-            key={index}
-            value={value}
-            control={<Radio />}
-            label={value}
-          />
-        );
-      });
-    }
-    return votingButtons;
-  };
-
-  const handleChange = (event) => {
-    setVote(event.target.value);
-  };
-
-  const handleSubmit = async () => {
-    // if a vote is selected, submit request to backend
-
-    const body = {
-      vote: vote,
-      repo: reponame,
-      issue_number: issuenumber,
-    };
-
-    const resp = await fetch(URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    });
-
-    // redirect
-  };
-
   return (
     <>
       <h2>{reponame}</h2>
-
-      <PlanningParty />
+      {isStarted && <PlanningParty />}
       <div>{getIssue()}</div>
-      <FormControl>
-        <RadioGroup
-          row
-          aria-labelledby="demo-controlled-radio-buttons-group"
-          name="controlled-radio-buttons-group"
-          value={vote}
-          onChange={handleChange}
-        >
-          {getVotingButtons()}
-        </RadioGroup>
-      </FormControl>
-      {/* TODO: disabled until a repo is selected */}
-      <div className="centerpage">
-        <Button
-          onClick={() => {
-            handleSubmit();
-          }}
-        >
-          {" "}
-          Submit Vote{" "}
-        </Button>
-      </div>
+      {!isStarted && (
+        <>
+          <Button onClick={handleOpen}>Start planning party</Button>
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={style}>
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                Enter your name
+              </Typography>
+              <TextField
+                id="outlined-basic"
+                className="centerpage"
+                label="Enter name"
+                variant="outlined"
+                margin="normal"
+                value={name}
+                onChange={(event) => {
+                  setName(event.target.value);
+                }}
+              />
+              <Button onClick={() => setIsStarted(true)}>Start</Button>
+            </Box>
+          </Modal>
+        </>
+      )}
     </>
   );
 }

@@ -226,12 +226,7 @@ const votes = {};
 
 app.post('/vote', (req, res) => {
   const {user, vote} = req.body;
-
   votes[user] = vote;
-
-  // check if user already there
-  // update their vote
-
   return res.json({ message: 'Thank You'});
 })
 
@@ -249,6 +244,7 @@ const sendEvent = (_req, res) => {
     'Content-Type': 'text/event-stream',
   });
 
+  // todo: create session id based on repo
   const sseId = new Date().toDateString();
 
   setInterval(() => {
