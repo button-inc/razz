@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
 export default function PlanningParty () {
-  const [donation, setDonation] = useState({ user: 0, vote: 0 });
+  const [party, setParty] = useState();
 
   useEffect(() => {
-    const source = new EventSource(`http://localhost:3000/party`);
+    const source = new EventSource(`/party`);
 
     source.addEventListener('open', () => {
       console.log('SSE opened!');
@@ -14,7 +14,7 @@ export default function PlanningParty () {
       console.log(e.data);
       const data = JSON.parse(e.data);
 
-      setDonation(data);
+      setParty(data);
     });
 
     source.addEventListener('error', (e) => {
@@ -33,19 +33,18 @@ export default function PlanningParty () {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({vote: 1})
+        body: JSON.stringify({user: 'tom', vote: 1})
     })
-
   };
 
+  console.log(party)
 
   return (
     <div>
-      <h1>Vote status</h1>
+      <h1>Planning Party</h1>
       <hr/>
-      <h3>Total amount: {donation.vote}</h3>
-      <h3>Total user: {donation.user}</h3>
-      <button onClick={() => handleClick()}>Donate</button>
+      {/* <h3>{party}</h3> */}
+      <button onClick={() => handleClick()}>Vote</button>
     </div>
   );
 }

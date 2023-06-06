@@ -222,16 +222,15 @@ app.post("/submitvote", (req, res) => {
 });
 
 
-const votes = {
-  user: 0,
-  vote: 0
-};
+const votes = {};
 
 app.post('/vote', (req, res) => {
-  const vote = req.body.vote;
+  const {user, vote} = req.body;
 
-  votes.vote += vote;
-  votes.user += 1;
+  votes[user] = vote;
+
+  // check if user already there
+  // update their vote
 
   return res.json({ message: 'Thank You'});
 })
