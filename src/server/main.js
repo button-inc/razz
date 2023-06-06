@@ -90,6 +90,8 @@ app.get("/github/user", (req, res) => {
 });
 
 app.get("/github/repo", (req, res) => {
+  const { page } = req.query
+
   // get the token cookie
   cookiejar.getCookies(baseurl, (err, cookies) => {
     if (err) {
@@ -99,7 +101,7 @@ app.get("/github/repo", (req, res) => {
     const token = cookies[0].value;
     axios
       .get(
-        "https://api.github.com/user/repos?affiliation=collaborator&per_page=100",
+        `https://api.github.com/user/repos?affiliation=owner,collaborator&per_page=100&page=${page}`,
         {
           headers: {
             Accept: "application/vnd.github+json",
@@ -110,8 +112,7 @@ app.get("/github/repo", (req, res) => {
       )
       .then((response) => {
         const { data } = response;
-        const repos = data.map((repo) => repo.full_name);
-        res.send(repos);
+        res.send(data);
       })
       .catch((error) => {
         console.log("error fetching repos: ", error);

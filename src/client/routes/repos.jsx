@@ -1,20 +1,42 @@
-import { useLoaderData, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Navbar from "../components/navbar";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 
-export function loader() {
-  return fetch("/github/repo");
-}
-
 export default function Repos() {
-  const repos = useLoaderData();
-
+  const [page, setPage] = useState(0);
+  const [repos, setRepos] = useState([]);
   const [selectedRepo, setSelectedRepo] = useState();
+
+  useEffect(() => {
+    let abortController = new AbortController();
+    let { signal } = abortController;
+    fetch(`/github/repo?page=${page}`, {
+      signal,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setRepos((prev) => [...prev, ...data]);
+        if (data.length < 100) {
+
+          // todo: set loading state false
+
+          return () => {
+            abortController.abort();
+          };
+        }
+        setPage(page + 1);
+      })
+      .catch((err) => {
+        if (err.name === "AbortError") {
+          setRepos([]);
+        }
+      });
+  }, [page]);
 
   const listRepos = () => {
     const reposList = [];
@@ -26,9 +48,9 @@ export default function Repos() {
       reposList.push(
         <FormControlLabel
           key={index}
-          value={repo}
+          value={repo.full_name}
           control={<Radio />}
-          label={repo}
+          label={repo.full_name}
         />
       );
     });
