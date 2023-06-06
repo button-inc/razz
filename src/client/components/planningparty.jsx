@@ -18,8 +18,9 @@ const votingOptions = [
   "coffee",
 ];
 
-export default function PlanningParty() {
-  const [party, setParty] = useState();
+export default function PlanningParty({ name }) {
+  const [party, setParty] = useState({});
+  const [vote, setVote] = useState();
 
   useEffect(() => {
     const source = new EventSource(`/party`);
@@ -44,19 +45,33 @@ export default function PlanningParty() {
     };
   }, []);
 
+  // send user name with empty vote so you can see who is in the party
+  //   fetch(`/vote`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({ user: `${name}`, vote: '' }),
+  //   });
+
   const handleClick = async () => {
     await fetch(`/vote`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ user: "tom", vote: `${vote}` }),
+      body: JSON.stringify({ user: name, vote: `${vote}` }),
     });
   };
 
-  console.log(party);
+  const getUserVotes = () => {
+    const userVotes = [];
 
-  const [vote, setVote] = useState();
+    Object.entries(party).forEach( ([key, value]) => {
+        userVotes.push(<li>{key} : {value}</li>)
+      })
+      return userVotes;
+  }
 
   const getVotingButtons = () => {
     const votingButtons = [];
@@ -83,6 +98,10 @@ export default function PlanningParty() {
   return (
     <div>
       <h2>Planning Party</h2>
+      <div>votes</div>
+      <ul>
+        {getUserVotes()}
+      </ul>
       <FormControl>
         <RadioGroup
           row

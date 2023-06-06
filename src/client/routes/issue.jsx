@@ -67,7 +67,7 @@ export default function Issue() {
   return (
     <>
       <h2>{reponame}</h2>
-      {isStarted && <PlanningParty />}
+      {isStarted && <PlanningParty name={name} />}
       <div>{getIssue()}</div>
       {!isStarted && (
         <>
