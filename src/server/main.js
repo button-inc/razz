@@ -89,10 +89,12 @@ app.get("/github/user", (req, res) => {
   });
 });
 
+// TODO: switch to async
 app.get("/github/repo", (req, res) => {
   const { page } = req.query
 
   // get the token cookie
+  // TODO: probably async?
   cookiejar.getCookies(baseurl, (err, cookies) => {
     if (err) {
       res.redirect(baseurl);
@@ -217,6 +219,52 @@ app.post("/submitvote", (req, res) => {
   //       res.redirect(baseurl);
   //     });
   // });
+});
+
+
+const votes = {
+  user: 0,
+  vote: 0
+};
+
+app.post('/vote', (req, res) => {
+  const vote = req.body.vote;
+
+  votes.vote += vote;
+  votes.user += 1;
+
+  return res.json({ message: 'Thank You'});
+})
+
+const SEND_INTERVAL = 2000;
+
+const writeEvent = (res, sseId, data) => {
+  res.write(`id: ${sseId}\n`);
+  res.write(`data: ${data}\n\n`);
+};
+
+const sendEvent = (_req, res) => {
+  res.writeHead(200, {
+    'Cache-Control': 'no-cache',
+    Connection: 'keep-alive',
+    'Content-Type': 'text/event-stream',
+  });
+
+  const sseId = new Date().toDateString();
+
+  setInterval(() => {
+    writeEvent(res, sseId, JSON.stringify(votes));
+  }, SEND_INTERVAL);
+
+  writeEvent(res, sseId, JSON.stringify(votes));
+};
+
+app.get('/party', (req, res) => {
+  if (req.headers.accept === 'text/event-stream') {
+    sendEvent(req, res);
+  } else {
+    res.json({ message: 'Ok' });
+  }
 });
 
 ViteExpress.listen(app, port, () =>

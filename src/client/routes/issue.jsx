@@ -9,6 +9,7 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import { Button } from "@mui/material";
+import PlanningParty from "../components/planningparty";
 
 const URL = import.meta.env.BASE_URL + "submitvote/";
 
@@ -107,6 +108,8 @@ export default function Issue() {
   return (
     <>
       <h2>{reponame}</h2>
+
+      <PlanningParty />
       <div>{getIssue()}</div>
       <FormControl>
         <RadioGroup
