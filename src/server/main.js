@@ -91,7 +91,8 @@ app.get("/github/user", (req, res) => {
 
 // TODO: tech debt - switch to async/await
 app.get("/github/repo", (req, res) => {
-  const { page } = req.query
+  const { page } = req.query;
+  console.log("repos page:", page);
 
   // get the token cookie
   cookiejar.getCookies(baseurl, (err, cookies) => {
@@ -102,7 +103,7 @@ app.get("/github/repo", (req, res) => {
     const token = cookies[0].value;
     axios
       .get(
-        `https://api.github.com/user/repos?affiliation=owner,collaborator&per_page=100&page=${page}`,
+        `https://api.github.com/user/repos?affiliation=owner,collaborator&page=${page}`,
         {
           headers: {
             Accept: "application/vnd.github+json",
@@ -220,17 +221,16 @@ app.post("/submitvote", (req, res) => {
   // });
 });
 
-
 // TODO reset user votes when issue changes
 let votes = {};
 
-app.post('/vote', (req, res) => {
+app.post("/vote", (req, res) => {
   // TODO: ensure user has auth token
   // TODO: pass some id in here to ensure votes are attributed to the right thing?
-  const {user, vote} = req.body;
+  const { user, vote } = req.body;
   votes[user] = vote;
-  return res.json({ message: 'Thank You'});
-})
+  return res.json({ message: "Thank You" });
+});
 
 const SEND_INTERVAL = 2000;
 
@@ -241,14 +241,14 @@ const writeEvent = (res, sseId, data) => {
 
 const sendEvent = (_req, res) => {
   res.writeHead(200, {
-    'Cache-Control': 'no-cache',
-    Connection: 'keep-alive',
-    'Content-Type': 'text/event-stream',
+    "Cache-Control": "no-cache",
+    Connection: "keep-alive",
+    "Content-Type": "text/event-stream",
   });
 
   // todo: create session id based on repo
   const sseId = new Date().toDateString();
-  console.log('sseID', sseId)
+  console.log("sseID", sseId);
 
   setInterval(() => {
     writeEvent(res, sseId, JSON.stringify(votes));
@@ -257,18 +257,18 @@ const sendEvent = (_req, res) => {
   writeEvent(res, sseId, JSON.stringify(votes));
 };
 
-app.get('/party', (req, res) => {
-  if (req.headers.accept === 'text/event-stream') {
+app.get("/party", (req, res) => {
+  if (req.headers.accept === "text/event-stream") {
     sendEvent(req, res);
   } else {
-    res.json({ message: 'Ok' });
+    res.json({ message: "Ok" });
   }
 });
 
-app.get('/clearvote', (req, res) => {
+app.get("/clearvote", (req, res) => {
   votes = {};
-  res.json({ message: 'Ok' });
-})
+  res.json({ message: "Ok" });
+});
 
 ViteExpress.listen(app, port, () =>
   console.log(`Server is listening on port ${port}...`)
