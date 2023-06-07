@@ -89,12 +89,11 @@ app.get("/github/user", (req, res) => {
   });
 });
 
-// TODO: switch to async
+// TODO: tech debt - switch to async/await
 app.get("/github/repo", (req, res) => {
   const { page } = req.query
 
   // get the token cookie
-  // TODO: probably async?
   cookiejar.getCookies(baseurl, (err, cookies) => {
     if (err) {
       res.redirect(baseurl);
@@ -222,9 +221,12 @@ app.post("/submitvote", (req, res) => {
 });
 
 
-const votes = {};
+// TODO reset user votes when issue changes
+let votes = {};
 
 app.post('/vote', (req, res) => {
+  // TODO: ensure user has auth token
+  // TODO: pass some id in here to ensure votes are attributed to the right thing?
   const {user, vote} = req.body;
   votes[user] = vote;
   return res.json({ message: 'Thank You'});
@@ -246,6 +248,7 @@ const sendEvent = (_req, res) => {
 
   // todo: create session id based on repo
   const sseId = new Date().toDateString();
+  console.log('sseID', sseId)
 
   setInterval(() => {
     writeEvent(res, sseId, JSON.stringify(votes));
@@ -261,6 +264,11 @@ app.get('/party', (req, res) => {
     res.json({ message: 'Ok' });
   }
 });
+
+app.get('/clearvote', (req, res) => {
+  votes = {};
+  res.json({ message: 'Ok' });
+})
 
 ViteExpress.listen(app, port, () =>
   console.log(`Server is listening on port ${port}...`)

@@ -45,14 +45,7 @@ export default function PlanningParty({ name }) {
     };
   }, []);
 
-  // send user name with empty vote so you can see who is in the party
-  //   fetch(`/vote`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({ user: `${name}`, vote: '' }),
-  //   });
+  // TODO: send user name with empty vote so you can see who is in the party
 
   const handleClick = async () => {
     await fetch(`/vote`, {
@@ -97,7 +90,6 @@ export default function PlanningParty({ name }) {
 
   return (
     <div>
-      <h2>Planning Party</h2>
       <div>votes</div>
       <ul>
         {getUserVotes()}

@@ -7,7 +7,7 @@ import PlanningParty from "../components/planningparty";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 
 const style = {
@@ -33,6 +33,11 @@ export default function Issue() {
   const [name, setName] = useState();
   const [open, setOpen] = useState(false);
   const [isStarted, setIsStarted] = useState(false);
+
+  // clear the voting history when you render an issue
+  useEffect(() => {
+    fetch('/clearvote')
+  }, [issue]);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
