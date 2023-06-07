@@ -69,31 +69,34 @@ app.get("/github/user", (req, res) => {
     }
 
     const token = cookies[0].value;
-    // get repos from github using token
-    axios
-      .get("https://api.github.com/user", {
-        headers: {
-          Accept: "application/vnd.github+json",
-          Authorization: `Bearer ${token}`,
-          "X-GitHub-Api-Version": "2022-11-28",
-        },
-      })
-      .then((response) => {
+
+    const endpoint = "https://api.github.com/graphql";
+    const headers = {
+      "content-type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+
+    const graphqlQuery = {
+      operationName: "getUser",
+      query: `query getUser{viewer {login}}`,
+      variables: {},
+    };
+
+    axios({
+      url: endpoint,
+      method: "post",
+      headers: headers,
+      data: graphqlQuery,
+    })
+    .then((response) => {
         const { data } = response;
         res.send(data);
-      })
-      .catch((error) => {
-        console.log("error fetching user: ", error);
-        res.redirect(baseurl);
       });
   });
 });
 
 // TODO: tech debt - switch to async/await
 app.get("/github/repo", (req, res) => {
-  const { page } = req.query;
-  console.log("repos page:", page);
-
   // get the token cookie
   cookiejar.getCookies(baseurl, (err, cookies) => {
     if (err) {

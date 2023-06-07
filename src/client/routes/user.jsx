@@ -7,14 +7,14 @@ export function loader() {
 }
 
 export default function User() {
-  const user = useLoaderData();
+  const { data } = useLoaderData();
 
   return (
     <>
       <Navbar />
       <div className="centerpage">
         <div className="login">
-          {user?.name && <h2>{`Welcome ${user.name}`}</h2>}
+          {data?.viewer?.login && <h2>{`Welcome ${data.viewer.login}`}</h2>}
           <div style={{ display: "flex", flexDirection: "row" }}>
           <div>
               <h3>Start a planning party</h3>
