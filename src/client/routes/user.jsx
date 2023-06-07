@@ -1,5 +1,6 @@
 import Navbar from "../components/navbar";
 import { useLoaderData, Link } from "react-router-dom";
+import TextField from "@mui/material/TextField";
 
 export function loader() {
   return fetch("/github/user");
@@ -14,11 +15,34 @@ export default function User() {
       <div className="centerpage">
         <div className="login">
           {user?.name && <h2>{`Welcome ${user.name}`}</h2>}
+          <div style={{ display: "flex", flexDirection: "row" }}>
           <div>
-            <Link className="link-button" to={"/repos"}>
-              {" "}
-              Import GitHub Repositories{" "}
-            </Link>
+              <h3>Start a planning party</h3>
+              <Link className="link-button" to={"/repos"}>
+                {" "}
+                Import GitHub Repositories{" "}
+              </Link>
+            </div>
+            <div
+              style={{ display: "flex", alignItems: "center", margin: "1rem" }}
+            >
+              or
+            </div>
+            <div>
+              <h3 style={{marginBottom: "0"}}>Join a planning party</h3>
+              <TextField
+                id="outlined-basic"
+                className="centerpage"
+                label="Enter code"
+                variant="outlined"
+                margin="normal"
+              />
+              <Link className="link-button centerpage" >
+                {" "}
+                Join party{" "}
+              </Link>
+            </div>
+
           </div>
         </div>
       </div>

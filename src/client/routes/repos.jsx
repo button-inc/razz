@@ -1,70 +1,45 @@
-import { useLoaderData, Link } from "react-router-dom";
 import Navbar from "../components/navbar";
 
-import React, { useState } from "react";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
+import React, { useEffect, useState } from "react";
+import ReposList from "../components/reposlist";
 
-export function loader() {
-  return fetch("/github/repo");
-}
+function Repos() {
+  const [repos, setRepos] = useState();
+  const [isLoading, setIsLoading] = useState(true);
 
-export default function Repos() {
-  const repos = useLoaderData();
+  useEffect(() => {
+    fetchAllPages();
+  }, []);
 
-  const [selectedRepo, setSelectedRepo] = useState();
+  async function fetchAllPages() {
+    const repos = [];
+    let i = 0;
 
-  const listRepos = () => {
-    const reposList = [];
-    if (repos.length < 1) {
-      return <div></div>;
-    }
+    do {
+      const response = await fetch(`/github/repo?page=${i}`);
+      const data = await response.json();
+      repos.push(...data);
+      i = i + 1;
+    } while (repos.length % 30 === 0);
 
-    repos.forEach((repo, index) => {
-      reposList.push(
-        <FormControlLabel
-          key={index}
-          value={repo}
-          control={<Radio />}
-          label={repo}
-        />
-      );
-    });
-    return reposList;
-  };
-
-  const handleChange = (event) => {
-    setSelectedRepo(event.target.value);
-  };
+    setRepos(repos);
+    setIsLoading(false);
+  }
 
   return (
     <>
       <Navbar />
       <div className="centerpage">
         <div className="login">
-          <h2>Select a repo to import</h2>
-          <FormControl>
-            <RadioGroup
-              aria-labelledby="demo-controlled-radio-buttons-group"
-              name="controlled-radio-buttons-group"
-              value={selectedRepo}
-              onChange={handleChange}
-            >
-              {listRepos()}
-            </RadioGroup>
-          </FormControl>
-          <div className="centerpage">
-            {/* TODO: disabled until a repo is selected */}
-            <Link className="link-button" to={`/vote/${selectedRepo}`}>
-              {" "}
-              Import{" "}
-            </Link>
-          </div>
+          {!isLoading && (
+            <>
+              <ReposList repos={repos} />
+            </>
+          )}
         </div>
       </div>
     </>
   );
 }
+
+export default React.memo(Repos);
