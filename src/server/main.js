@@ -88,11 +88,10 @@ app.get("/github/user", (req, res) => {
       method: "post",
       headers: headers,
       data: graphqlQuery,
-    })
-    .then((response) => {
-        const { data } = response;
-        res.send(data);
-      });
+    }).then((response) => {
+      const { data } = response;
+      res.send(data);
+    });
   });
 });
 
@@ -191,7 +190,7 @@ app.get("/github/issue", (req, res) => {
 app.post("/submitvote", (req, res) => {
   const { vote, repo, issuenumber } = req.body;
 
-  console.log(vote, repo, issuenumber)
+  console.log(vote, repo, issuenumber);
 
   // res.sendStatus(200);
 
@@ -217,7 +216,7 @@ app.post("/submitvote", (req, res) => {
         }
       )
       .then((response) => {
-        console.log(response.json())
+        console.log(response.json());
         res.sendStatus(200);
       })
       .catch((error) => {
@@ -227,9 +226,7 @@ app.post("/submitvote", (req, res) => {
   });
 });
 
-app.get("/checkaccess", (req,res) => {
-
-
+app.get("/checkaccess", (req, res) => {
   cookiejar.getCookies(baseurl, (err, cookies) => {
     if (err) {
       res.redirect(baseurl);
@@ -237,19 +234,16 @@ app.get("/checkaccess", (req,res) => {
 
     const token = cookies[0].value;
     axios
-      .get(
-        `https://api.github.com/user/installations`,
-        {
-          headers: {
-            Accept: "application/vnd.github+json",
-            Authorization: `Bearer ${token}`,
-            "X-GitHub-Api-Version": "2022-11-28",
-          },
-        }
-      )
+      .get(`https://api.github.com/user/installations`, {
+        headers: {
+          Accept: "application/vnd.github+json",
+          Authorization: `Bearer ${token}`,
+          "X-GitHub-Api-Version": "2022-11-28",
+        },
+      })
       .then((response) => {
         const { data } = response;
-        console.log(data)
+        console.log(data);
         res.send(data);
       })
       .catch((error) => {
@@ -258,7 +252,7 @@ app.get("/checkaccess", (req,res) => {
       });
   });
   // /user/installations
-})
+});
 
 // TODO reset user votes when issue changes
 let votes = {};
