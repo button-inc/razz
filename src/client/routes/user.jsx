@@ -1,17 +1,13 @@
 import Navbar from "../components/navbar";
 import { useLoaderData, Link } from "react-router-dom";
 import TextField from "@mui/material/TextField";
-import { Button } from "@mui/material";
+
 export function loader() {
   return fetch("/github/user");
 }
 
 export default function User() {
   const { data } = useLoaderData();
-
-  const handleSubmit = async () => {
-    await fetch(`/checkaccess`);
-  };
 
   return (
     <>
@@ -43,14 +39,6 @@ export default function User() {
               />
               <Link className="link-button centerpage"> Join party </Link>
             </div>
-            <Button
-              onClick={() => {
-                handleSubmit();
-              }}
-            >
-              {" "}
-              check permissions{" "}
-            </Button>
           </div>
         </div>
       </div>

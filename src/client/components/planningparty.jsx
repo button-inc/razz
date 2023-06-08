@@ -93,6 +93,7 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
   };
 
   const handleSubmit = async () => {
+    // close sse connection first?
     await fetch(`/submitvote`, {
       method: "POST",
       headers: {
