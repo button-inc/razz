@@ -48,6 +48,7 @@ app.get("/auth/exchange/", (req, res, next) => {
     .then((response) => {
       const token = new URLSearchParams(response.data).get("access_token");
       const cookie = Cookie.parse(`token=${token}`);
+      // console.log(token)
 
       cookiejar.setCookie(cookie, baseurl, (err, cookie) => {
         if (err) {
@@ -97,6 +98,8 @@ app.get("/github/user", (req, res) => {
 
 // TODO: tech debt - switch to async/await
 app.get("/github/repo", (req, res) => {
+  const { page } = req.query;
+
   // get the token cookie
   cookiejar.getCookies(baseurl, (err, cookies) => {
     if (err) {
@@ -186,43 +189,76 @@ app.get("/github/issue", (req, res) => {
 });
 
 app.post("/submitvote", (req, res) => {
-  const { vote, repo, issue_number } = req.body;
+  const { vote, repo, issuenumber } = req.body;
 
-  res.sendStatus(200);
+  console.log(vote, repo, issuenumber)
+
+  // res.sendStatus(200);
 
   // token doesn't have permission?
   // "message": "Resource not accessible by integration",
-  // cookiejar.getCookies(baseurl, (err, cookies) => {
-  //   if (err) {
-  //     res.redirect(baseurl);
-  //   }
+  cookiejar.getCookies(baseurl, (err, cookies) => {
+    if (err) {
+      res.redirect(baseurl);
+    }
 
-  //   const token = cookies[0].value;
+    const token = cookies[0].value;
 
-  //   axios
-  //     .patch(
-  //       `https://api.github.com/repos/${repo}/issues/${issue_number}`,
-  //       {
-  //         headers: {
-  //           Accept: "application/vnd.github+json",
-  //           Authorization: `Bearer ${token}`,
-  //           "X-GitHub-Api-Version": "2022-11-28",
-  //         },
-  //         data: {
-  //           labels: [`${vote}`]
-  //         }
-  //       }
-  //     )
-  //     .then((response) => {
-  //       console.log(response.json())
-  //       res.sendStatus(200);
-  //     })
-  //     .catch((error) => {
-  //       console.log("error submitting vote: ", error);
-  //       res.redirect(baseurl);
-  //     });
-  // });
+    axios
+      .post(
+        `https://api.github.com/repos/${repo}/issues/${issuenumber}/comments`,
+        {
+          headers: {
+            Accept: "application/vnd.github+json",
+            Authorization: `Bearer ${token}`,
+            "X-GitHub-Api-Version": "2022-11-28",
+          },
+          body: `${vote}`,
+        }
+      )
+      .then((response) => {
+        console.log(response.json())
+        res.sendStatus(200);
+      })
+      .catch((error) => {
+        console.log("error submitting vote: ", error);
+        res.redirect(baseurl);
+      });
+  });
 });
+
+app.get("/checkaccess", (req,res) => {
+
+
+  cookiejar.getCookies(baseurl, (err, cookies) => {
+    if (err) {
+      res.redirect(baseurl);
+    }
+
+    const token = cookies[0].value;
+    axios
+      .get(
+        `https://api.github.com/user/installations`,
+        {
+          headers: {
+            Accept: "application/vnd.github+json",
+            Authorization: `Bearer ${token}`,
+            "X-GitHub-Api-Version": "2022-11-28",
+          },
+        }
+      )
+      .then((response) => {
+        const { data } = response;
+        console.log(data)
+        res.send(data);
+      })
+      .catch((error) => {
+        console.log("error fetching repos: ", error);
+        res.redirect(baseurl);
+      });
+  });
+  // /user/installations
+})
 
 // TODO reset user votes when issue changes
 let votes = {};
