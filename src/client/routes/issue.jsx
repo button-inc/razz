@@ -72,7 +72,7 @@ export default function Issue() {
   return (
     <>
       <h2>{reponame}</h2>
-      {isStarted && <PlanningParty name={name} />}
+      {isStarted && <PlanningParty name={name} reponame={reponame} issuenumber={issuenumber}/>}
       <div>{getIssue()}</div>
       {!isStarted && (
         <>

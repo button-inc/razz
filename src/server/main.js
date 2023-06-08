@@ -29,207 +29,204 @@ app.post("/auth/login", (req, res) => {
   res.redirect(location);
 });
 
-app.get("/auth/exchange/", (req, res, next) => {
-  const { code } = req.query;
-  // env params to request access token
-  const params = {
-    client_id: process.env.CLIENT_ID,
-    client_secret: process.env.CLIENT_SECRET,
-    code,
-  };
+app.get("/auth/exchange/", async (req, res, next) => {
+  console.log("/auth/exchange/");
 
-  // request access token
-  axios
-    .post("https://github.com/login/oauth/access_token", params, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-    .then((response) => {
-      const token = new URLSearchParams(response.data).get("access_token");
-      const cookie = Cookie.parse(`token=${token}`);
+  try {
+    const { code } = req.query;
+    // env params to request access token
+    const params = {
+      client_id: process.env.CLIENT_ID,
+      client_secret: process.env.CLIENT_SECRET,
+      code,
+    };
 
-      cookiejar.setCookie(cookie, baseurl, (err, cookie) => {
-        if (err) {
-          res.redirect(baseurl);
-        }
-        res.redirect(`${baseurl}user`);
-      });
-    })
-    .catch((error) => {
-      // TODO: handle errors
-      next(error);
+    // request access token
+    const response = await axios.post(
+      "https://github.com/login/oauth/access_token",
+      params,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const token = new URLSearchParams(response.data).get("access_token");
+    const cookie = Cookie.parse(`token=${token}`);
+    const jar = await cookiejar.setCookie(cookie, baseurl);
+
+    res.redirect(`${baseurl}user`);
+  } catch (error) {
+    return next(error);
+  }
+});
+
+app.get("/github/user", async (req, res, next) => {
+  console.log("/github/user/");
+
+  try {
+    const cookie = await cookiejar.getCookies(baseurl);
+    const token = await cookie[0].value;
+
+    const endpoint = "https://api.github.com/graphql";
+    const headers = {
+      "content-type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+
+    const graphqlQuery = {
+      operationName: "getUser",
+      query: `query getUser{viewer {login}}`,
+      variables: {},
+    };
+
+    const response = await axios({
+      url: endpoint,
+      method: "post",
+      headers: headers,
+      data: graphqlQuery,
     });
+
+    const { data } = await response;
+
+    res.json(data);
+  } catch (error) {
+    return next(error);
+  }
 });
 
-app.get("/github/user", (req, res) => {
-  cookiejar.getCookies(baseurl, (err, cookies) => {
-    if (err) {
-      res.redirect(baseurl);
-    }
+app.get("/github/repo", async (req, res, next) => {
+  console.log("/github/repo");
+  try {
+    const { page } = req.query;
 
-    const token = cookies[0].value;
-    // get repos from github using token
-    axios
-      .get("https://api.github.com/user", {
+    // get the token cookie
+    const cookies = await cookiejar.getCookies(baseurl);
+
+    const token = await cookies[0]?.value;
+
+    const response = await axios.get(
+      `https://api.github.com/user/repos?affiliation=owner,collaborator&page=${page}`,
+      {
         headers: {
           Accept: "application/vnd.github+json",
           Authorization: `Bearer ${token}`,
           "X-GitHub-Api-Version": "2022-11-28",
         },
-      })
-      .then((response) => {
-        const { data } = response;
-        res.send(data);
-      })
-      .catch((error) => {
-        console.log("error fetching user: ", error);
-        res.redirect(baseurl);
-      });
-  });
+      }
+    );
+    const { data } = await response;
+
+    res.json(data);
+  } catch (error) {
+    return next(error);
+  }
 });
 
-// TODO: tech debt - switch to async/await
-app.get("/github/repo", (req, res) => {
-  const { page } = req.query;
-  console.log("repos page:", page);
+app.get("/github/issues", async (req, res, next) => {
+  console.log("/github/issues");
+  try {
+    const { owner, repo } = req.query;
 
-  // get the token cookie
-  cookiejar.getCookies(baseurl, (err, cookies) => {
-    if (err) {
-      res.redirect(baseurl);
-    }
+    // get the token cookie
+    const cookies = await cookiejar.getCookies(baseurl);
 
-    const token = cookies[0].value;
-    axios
-      .get(
-        `https://api.github.com/user/repos?affiliation=owner,collaborator&page=${page}`,
-        {
-          headers: {
-            Accept: "application/vnd.github+json",
-            Authorization: `Bearer ${token}`,
-            "X-GitHub-Api-Version": "2022-11-28",
-          },
-        }
-      )
-      .then((response) => {
-        const { data } = response;
-        res.send(data);
-      })
-      .catch((error) => {
-        console.log("error fetching repos: ", error);
-        res.redirect(baseurl);
-      });
-  });
-});
+    const token = await cookies[0]?.value;
 
-app.get("/github/issues", (req, res) => {
-  const { owner, repo } = req.query;
-
-  cookiejar.getCookies(baseurl, (err, cookies) => {
-    if (err) {
-      res.redirect(baseurl);
-    }
-
-    const token = cookies[0].value;
-    axios
-      .get(`https://api.github.com/repos/${owner}/${repo}/issues`, {
+    const response = await axios.get(
+      `https://api.github.com/repos/${owner}/${repo}/issues`,
+      {
         headers: {
           Accept: "application/vnd.github+json",
           Authorization: `Bearer ${token}`,
           "X-GitHub-Api-Version": "2022-11-28",
         },
-      })
-      .then((response) => {
-        const { data } = response;
-        res.send(data);
-      })
-      .catch((error) => {
-        console.log("error fetching repos: ", error);
-        res.redirect(baseurl);
-      });
-  });
+      }
+    );
+
+    const { data } = await response;
+    res.json(data);
+  } catch (error) {
+    return next(error);
+  }
 });
 
-app.get("/github/issue", (req, res) => {
-  const { owner, repo, issue_number } = req.query;
+app.get("/github/issue", async (req, res, next) => {
+  console.log("/github/issue");
+  try {
+    const { owner, repo, issue_number } = req.query;
 
-  cookiejar.getCookies(baseurl, (err, cookies) => {
-    if (err) {
-      res.redirect(baseurl);
-    }
+    const cookies = await cookiejar.getCookies(baseurl);
 
-    const token = cookies[0].value;
-    axios
-      .get(
-        `https://api.github.com/repos/${owner}/${repo}/issues/${issue_number}`,
-        {
-          headers: {
-            Accept: "application/vnd.github+json",
-            Authorization: `Bearer ${token}`,
-            "X-GitHub-Api-Version": "2022-11-28",
-          },
-        }
-      )
-      .then((response) => {
-        const { data } = response;
-        res.send(data);
-      })
-      .catch((error) => {
-        console.log("error fetching repos: ", error);
-        res.redirect(baseurl);
-      });
-  });
+    const token = await cookies[0]?.value;
+
+    const response = await axios.get(
+      `https://api.github.com/repos/${owner}/${repo}/issues/${issue_number}`,
+      {
+        headers: {
+          Accept: "application/vnd.github+json",
+          Authorization: `Bearer ${token}`,
+          "X-GitHub-Api-Version": "2022-11-28",
+        },
+      }
+    );
+
+    const { data } = await response;
+    res.json(data);
+  } catch (error) {
+    return next(error);
+  }
 });
 
-app.post("/submitvote", (req, res) => {
-  const { vote, repo, issue_number } = req.body;
+app.post("/submitvote", async (req, res, next) => {
+  console.log("/submitvote");
+  try {
+    const { vote, repo, issuenumber } = req.body;
 
-  res.sendStatus(200);
+    const cookies = await cookiejar.getCookies(baseurl);
+    const token = await cookies[0]?.value;
 
-  // token doesn't have permission?
-  // "message": "Resource not accessible by integration",
-  // cookiejar.getCookies(baseurl, (err, cookies) => {
-  //   if (err) {
-  //     res.redirect(baseurl);
-  //   }
+    const headers = {
+      "content-type": "application/json",
+      Authorization: `Bearer ${token}`,
+      Accept: "application/vnd.github+json",
+      Authorization: `Bearer ${token}`,
+      "X-GitHub-Api-Version": "2022-11-28",
+    };
 
-  //   const token = cookies[0].value;
+    // submit a comment on the issue
+    const URL = `https://api.github.com/repos/${repo}/issues/${issuenumber}/comments`;
 
-  //   axios
-  //     .patch(
-  //       `https://api.github.com/repos/${repo}/issues/${issue_number}`,
-  //       {
-  //         headers: {
-  //           Accept: "application/vnd.github+json",
-  //           Authorization: `Bearer ${token}`,
-  //           "X-GitHub-Api-Version": "2022-11-28",
-  //         },
-  //         data: {
-  //           labels: [`${vote}`]
-  //         }
-  //       }
-  //     )
-  //     .then((response) => {
-  //       console.log(response.json())
-  //       res.sendStatus(200);
-  //     })
-  //     .catch((error) => {
-  //       console.log("error submitting vote: ", error);
-  //       res.redirect(baseurl);
-  //     });
-  // });
+    const response = await axios({
+      url: URL,
+      method: "post",
+      headers: headers,
+      data: { body: `${vote}` },
+    });
+
+    const { data } = await response;
+    res.json(data);
+  } catch (error) {
+    console.log(error);
+    return next(error);
+  }
 });
 
 // TODO reset user votes when issue changes
 let votes = {};
 
-app.post("/vote", (req, res) => {
+app.post("/vote", async (req, res, next) => {
+  console.log("/vote");
   // TODO: ensure user has auth token
   // TODO: pass some id in here to ensure votes are attributed to the right thing?
-  const { user, vote } = req.body;
-  votes[user] = vote;
-  return res.json({ message: "Thank You" });
+  try {
+    const { user, vote } = req.body;
+    votes[user] = vote;
+    return res.json({ message: "Thank You" });
+  } catch (error) {
+    return next(error);
+  }
 });
 
 const SEND_INTERVAL = 2000;
@@ -258,6 +255,7 @@ const sendEvent = (_req, res) => {
 };
 
 app.get("/party", (req, res) => {
+  console.log("/party");
   if (req.headers.accept === "text/event-stream") {
     sendEvent(req, res);
   } else {

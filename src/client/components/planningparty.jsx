@@ -18,7 +18,7 @@ const votingOptions = [
   "coffee",
 ];
 
-export default function PlanningParty({ name }) {
+export default function PlanningParty({ name, reponame, issuenumber }) {
   const [party, setParty] = useState({});
   const [vote, setVote] = useState();
 
@@ -60,11 +60,15 @@ export default function PlanningParty({ name }) {
   const getUserVotes = () => {
     const userVotes = [];
 
-    Object.entries(party).forEach( ([key, value]) => {
-        userVotes.push(<li>{key} : {value}</li>)
-      })
-      return userVotes;
-  }
+    Object.entries(party).forEach(([key, value]) => {
+      userVotes.push(
+        <li>
+          {key} : {value}
+        </li>
+      );
+    });
+    return userVotes;
+  };
 
   const getVotingButtons = () => {
     const votingButtons = [];
@@ -88,12 +92,25 @@ export default function PlanningParty({ name }) {
     setVote(event.target.value);
   };
 
+  const handleSubmit = async () => {
+    // close sse connection first?
+    await fetch(`/submitvote`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        vote: `${vote}`,
+        repo: `${reponame}`,
+        issuenumber: `${issuenumber}`,
+      }),
+    });
+  };
+
   return (
     <div>
       <div>votes</div>
-      <ul>
-        {getUserVotes()}
-      </ul>
+      <ul>{getUserVotes()}</ul>
       <FormControl>
         <RadioGroup
           row
@@ -114,6 +131,17 @@ export default function PlanningParty({ name }) {
         >
           {" "}
           Submit Vote{" "}
+        </Button>
+      </div>
+
+      <div className="centerpage">
+        <Button
+          onClick={() => {
+            handleSubmit();
+          }}
+        >
+          {" "}
+          Submit Final Vote to GitHub{" "}
         </Button>
       </div>
     </div>
