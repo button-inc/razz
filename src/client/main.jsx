@@ -6,7 +6,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ErrorPage from "./error-page";
 import User, { loader as userLoader } from "./routes/user";
 import HomePage from "./routes/homepage";
-import Repos from "./routes/repos";
+import Repos, { loader as reposLoader } from "./routes/repos";
 import Issues, { loader as issuesLoader } from "./routes/issues";
 import Issue, { loader as issueLoader } from "./routes/issue";
 
@@ -26,6 +26,7 @@ const router = createBrowserRouter([
     path: "repos/",
     element: <Repos />,
     errorElement: <ErrorPage />,
+    loader: reposLoader,
   },
   {
     path: "vote/:owner/:repo",

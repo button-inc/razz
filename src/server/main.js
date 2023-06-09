@@ -100,6 +100,7 @@ app.get("/github/repo", async (req, res, next) => {
   console.log("/github/repo");
   try {
     const { page } = req.query;
+    console.log("fetching repos page", page);
 
     // get the token cookie
     const cookies = await cookiejar.getCookies(baseurl);
@@ -188,10 +189,8 @@ app.post("/submitvote", async (req, res, next) => {
     const token = await cookies[0]?.value;
 
     const headers = {
-      "content-type": "application/json",
       Authorization: `Bearer ${token}`,
       Accept: "application/vnd.github+json",
-      Authorization: `Bearer ${token}`,
       "X-GitHub-Api-Version": "2022-11-28",
     };
 
