@@ -291,7 +291,9 @@ const SEND_INTERVAL = 2000;
 const writeEvent = (res, sseId, data) => {
   res.write(`id: ${sseId}\n`);
   res.write(`data: ${data}\n\n`);
-};
+
+  // TODO: have different events (user joined, party leader, vote etc)
+  };
 
 const sendEvent = (_req, res) => {
   res.writeHead(200, {
@@ -300,8 +302,15 @@ const sendEvent = (_req, res) => {
     "Content-Type": "text/event-stream",
   });
 
+  const {repo} = _req.query
+  console.log(repo)
+
   // todo: create session id based on repo
-  const sseId = new Date().toDateString();
+  // todo: check if sseId already exists
+  // inform user there is already a session and redirect
+  // inform user who is the party leader?
+  // hash this??
+  const sseId = repo;
   console.log("sseID", sseId);
 
   setInterval(() => {
@@ -311,7 +320,15 @@ const sendEvent = (_req, res) => {
   writeEvent(res, sseId, JSON.stringify(votes));
 };
 
+// TODO: add options to the url or the request body when creating the sse connection
 app.get("/party", (req, res) => {
+  const {repo} = req.query
+
+  req.on('close', () => {
+    console.log('disconnected')
+  })
+
+  // TODO: Auth
   console.log("/party");
   if (req.headers.accept === "text/event-stream") {
     sendEvent(req, res);

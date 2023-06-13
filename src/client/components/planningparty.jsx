@@ -23,7 +23,7 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
   const [vote, setVote] = useState();
 
   useEffect(() => {
-    const source = new EventSource(`/party`);
+    const source = new EventSource(`/party?repo=${reponame}`);
 
     source.addEventListener("open", () => {
       console.log("SSE opened!");
@@ -40,6 +40,8 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
       console.error("Error: ", e);
     });
 
+    // clean up function runs on unmount
+    // example to close the connection just go to a new page?
     return () => {
       source.close();
     };
