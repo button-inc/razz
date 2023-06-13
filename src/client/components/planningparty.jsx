@@ -78,13 +78,10 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
     });
 
     // clean up function runs on unmount
-    // example to close the connection just go to a new page?
     return () => {
       source.close();
     };
   }, []);
-
-  // TODO: send user name with empty vote so you can see who is in the party
 
   const handleClick = async () => {
     await fetch(`/vote`, {
@@ -139,7 +136,6 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
   const handleClose = () => setOpen(false);
 
   const handleSubmit = async () => {
-    // close sse connection first?
     await fetch(`/submitvote`, {
       method: "POST",
       headers: {
@@ -152,9 +148,7 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
       }),
     });
 
-    // close the modal
     handleClose();
-    // display the final vote and disable more voting
     setVoteSubmitted(true);
   };
 
@@ -179,7 +173,7 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
       {/* TODO: disabled until a vote is selected */}
       <div className="centerpage">
         <Button
-          disabled={voteSubmitted}
+          disabled={!vote || voteSubmitted}
           onClick={() => {
             handleClick();
           }}

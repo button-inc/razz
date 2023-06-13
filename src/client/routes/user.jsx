@@ -1,6 +1,7 @@
 import Navbar from "../components/navbar";
 import { useLoaderData, Link } from "react-router-dom";
 import TextField from "@mui/material/TextField";
+import { useState } from "react";
 
 export function loader() {
   return fetch("/github/user");
@@ -8,6 +9,7 @@ export function loader() {
 
 export default function User() {
   const { data } = useLoaderData();
+  const [code, setCode] = useState();
 
   return (
     <>
@@ -33,11 +35,18 @@ export default function User() {
               <TextField
                 id="outlined-basic"
                 className="centerpage"
-                label="Enter code"
+                label="Enter code (owner/repo)"
                 variant="outlined"
                 margin="normal"
+                value={code}
+                onChange={(event) => {
+                  setCode(event.target.value);
+                }}
               />
-              <Link className="link-button centerpage"> Join party </Link>
+              <Link className="link-button centerpage" to={`/vote/${code}`}>
+                {" "}
+                Join party{" "}
+              </Link>
             </div>
           </div>
         </div>
