@@ -13,7 +13,9 @@ export async function loader() {
     repos.push(...data);
     i = i + 1;
 
-    if(data.length < 30) {break;}
+    if (data.length < 30) {
+      break;
+    }
   } while (1);
 
   return repos;
