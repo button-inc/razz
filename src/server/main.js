@@ -290,7 +290,7 @@ app.post("/room", async (req, res, next) => {
   console.log("/room");
   try {
     const { user } = req.body;
-    room[user] = 'online';
+    room[user] = false; // false indicates if the user has voted??
 
     return res.json({ message: "Connected" });
   } catch (error) {
