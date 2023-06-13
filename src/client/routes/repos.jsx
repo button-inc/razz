@@ -12,7 +12,9 @@ export async function loader() {
     const data = await response.json();
     repos.push(...data);
     i = i + 1;
-  } while (repos.length % 30 === 0);
+
+    if(data.length < 30) {break;}
+  } while (1);
 
   return repos;
 }
