@@ -271,7 +271,7 @@ app.post("/submitvote", async (req, res, next) => {
 });
 
 let votes = {};
-let room = {};
+let room = { people: [] };
 
 app.post("/vote", async (req, res, next) => {
   console.log("/vote");
@@ -290,8 +290,10 @@ app.post("/room", async (req, res, next) => {
   console.log("/room");
   try {
     const { user } = req.body;
-    room[user] = false; // false indicates if the user has voted??
-
+    if (!(room.people.indexOf(user) > -1)) {
+      console.log(user, " joined");
+      room.people.push(user);
+    }
     return res.json({ message: "Connected" });
   } catch (error) {
     return next(error);

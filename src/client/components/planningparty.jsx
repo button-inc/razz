@@ -7,6 +7,7 @@ import { Button } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
+import RoomInfo from "./roominfo";
 
 const votingOptions = [
   "0",
@@ -36,12 +37,10 @@ const style = {
 export default function PlanningParty({ name, reponame, issuenumber }) {
   const [party, setParty] = useState({}); // party room vote data
   const [vote, setVote] = useState(); // this user vote selection
-  const [room, setRoom] = useState(); // users in the room
+  const [room, setRoom] = useState({ people: [] }); // users in the room
   const [final, setFinal] = useState();
   const [open, setOpen] = useState(false);
   const [voteSubmitted, setVoteSubmitted] = useState(false);
-
-  console.log(room);
 
   useEffect(() => {
     fetch(`/room`, {
@@ -51,7 +50,7 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
       },
       body: JSON.stringify({ user: name }),
     });
-  }, [name]);
+  }, []);
 
   useEffect(() => {
     const source = new EventSource(`/party?repo=${reponame}`);
@@ -154,10 +153,10 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
 
   return (
     <div>
+      <RoomInfo room={room} />
       <div>votes</div>
       <ul>{getUserVotes()}</ul>
       {/* User voting options */}
-      {/* disable votes once selected */}
       <FormControl>
         <RadioGroup
           row
@@ -170,7 +169,6 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
         </RadioGroup>
       </FormControl>
       {/* User vote submit */}
-      {/* TODO: disabled until a vote is selected */}
       <div className="centerpage">
         <Button
           disabled={!vote || voteSubmitted}

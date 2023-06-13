@@ -36,7 +36,7 @@ export default function Issue() {
 
   // clear the voting history when you render an issue
   useEffect(() => {
-    fetch('/clearvote')
+    fetch("/clearvote");
   }, [issue]);
 
   const handleOpen = () => setOpen(true);
@@ -72,7 +72,13 @@ export default function Issue() {
   return (
     <>
       <h2>{reponame}</h2>
-      {isStarted && <PlanningParty name={name} reponame={reponame} issuenumber={issuenumber}/>}
+      {isStarted && (
+        <PlanningParty
+          name={name}
+          reponame={reponame}
+          issuenumber={issuenumber}
+        />
+      )}
       <div>{getIssue()}</div>
       {!isStarted && (
         <>
