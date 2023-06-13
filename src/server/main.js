@@ -270,8 +270,8 @@ app.post("/submitvote", async (req, res, next) => {
   }
 });
 
-// TODO reset user votes when issue changes
 let votes = {};
+let room = {};
 
 app.post("/vote", async (req, res, next) => {
   console.log("/vote");
@@ -286,14 +286,31 @@ app.post("/vote", async (req, res, next) => {
   }
 });
 
+app.post("/room", async (req, res, next) => {
+  console.log("/room");
+  try {
+    const { user } = req.body;
+    room[user] = 'online';
+
+    return res.json({ message: "Connected" });
+  } catch (error) {
+    return next(error);
+  }
+});
+
 const SEND_INTERVAL = 2000;
 
-const writeEvent = (res, sseId, data) => {
+const writeVoteEvent = (res, sseId, data) => {
+  res.write("event: votes\n");
   res.write(`id: ${sseId}\n`);
   res.write(`data: ${data}\n\n`);
+};
 
-  // TODO: have different events (user joined, party leader, vote etc)
-  };
+const writeRoomEvent = (res, sseId, data) => {
+  res.write("event: room\n");
+  res.write(`id: ${sseId}\n`);
+  res.write(`data: ${data}\n\n`);
+};
 
 const sendEvent = (_req, res) => {
   res.writeHead(200, {
@@ -302,10 +319,8 @@ const sendEvent = (_req, res) => {
     "Content-Type": "text/event-stream",
   });
 
-  const {repo} = _req.query
-  console.log(repo)
-
-  // todo: create session id based on repo
+  const { repo } = _req.query;
+  console.log(repo);
   // todo: check if sseId already exists
   // inform user there is already a session and redirect
   // inform user who is the party leader?
@@ -314,19 +329,24 @@ const sendEvent = (_req, res) => {
   console.log("sseID", sseId);
 
   setInterval(() => {
-    writeEvent(res, sseId, JSON.stringify(votes));
+    writeVoteEvent(res, sseId, JSON.stringify(votes));
   }, SEND_INTERVAL);
 
-  writeEvent(res, sseId, JSON.stringify(votes));
+  setInterval(() => {
+    writeRoomEvent(res, sseId, JSON.stringify(room));
+  }, SEND_INTERVAL);
+
+  writeVoteEvent(res, sseId, JSON.stringify(votes));
+  writeRoomEvent(res, sseId, JSON.stringify(room));
 };
 
 // TODO: add options to the url or the request body when creating the sse connection
 app.get("/party", (req, res) => {
-  const {repo} = req.query
+  const { repo } = req.query;
 
-  req.on('close', () => {
-    console.log('disconnected')
-  })
+  req.on("close", () => {
+    console.log("disconnected");
+  });
 
   // TODO: Auth
   console.log("/party");

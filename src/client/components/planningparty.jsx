@@ -19,8 +19,12 @@ const votingOptions = [
 ];
 
 export default function PlanningParty({ name, reponame, issuenumber }) {
-  const [party, setParty] = useState({});
-  const [vote, setVote] = useState();
+  const [party, setParty] = useState({}); // party room vote data
+  const [vote, setVote] = useState(); // this user vote selection
+  const [room, setRoom] = useState(); // users in the room
+
+  console.log(room)
+
 
   useEffect(() => {
     const source = new EventSource(`/party?repo=${reponame}`);
@@ -29,11 +33,17 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
       console.log("SSE opened!");
     });
 
-    source.addEventListener("message", (e) => {
+    source.addEventListener("votes", (e) => {
       console.log(e.data);
       const data = JSON.parse(e.data);
 
       setParty(data);
+    });
+
+    source.addEventListener("room", (e) => {
+      console.log(e.data);
+      const data = JSON.parse(e.data);
+      setRoom(data);
     });
 
     source.addEventListener("error", (e) => {
@@ -94,20 +104,19 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
     setVote(event.target.value);
   };
 
-  const handleSubmit = async () => {
-    // close sse connection first?
-    await fetch(`/submitvote`, {
+
+
+  useEffect(() => {
+    fetch(`/room`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        vote: `${vote}`,
-        repo: `${reponame}`,
-        issuenumber: `${issuenumber}`,
-      }),
+      body: JSON.stringify({ user: name }),
     });
-  };
+
+  },[name])
+
 
   return (
     <div>
