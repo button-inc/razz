@@ -9,7 +9,6 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import RoomInfo from "./roominfo";
 import VoteInfo from "./voteinfo";
-// import { useNavigate } from "react-router-dom";
 
 const votingOptions = [
   "0",
@@ -43,8 +42,7 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
   const [open, setOpen] = useState(false);
   const [voteSubmitted, setVoteSubmitted] = useState(false);
 
-  // const navigate = useNavigate();
-
+  // when joining the party first time, submit name to the session
   useEffect(() => {
     fetch(`/room`, {
       method: "POST",
@@ -79,7 +77,8 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
     };
   }, []);
 
-  const handleClick = async () => {
+  // submit personal vote to the session
+  const handleVote = async () => {
     await fetch(`/vote`, {
       method: "POST",
       headers: {
@@ -135,72 +134,75 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
     setVoteSubmitted(true);
   };
 
-  const handleEndSession = async () => {
-    await fetch("/endsession");
-  };
-
   return (
-    <div>
-      <RoomInfo party={party} />
-      <VoteInfo party={party} />
-      {/* User voting options */}
-      <FormControl>
-        <RadioGroup
-          row
-          aria-labelledby="demo-controlled-radio-buttons-group"
-          name="controlled-radio-buttons-group"
-          value={vote}
-          onChange={handleChange}
-        >
-          {getVotingButtons()}
-        </RadioGroup>
-      </FormControl>
-      {/* User vote submit */}
-      <div className="centerpage">
-        <Button
-          disabled={!vote || voteSubmitted}
-          onClick={() => {
-            handleClick();
-          }}
-        >
-          {" "}
-          Submit Vote{" "}
-        </Button>
+    <div className="party-container">
+      <div className="party-room-info-container">
+        <RoomInfo party={party} />
       </div>
-      {/* Submit final vote to github */}
-      <>
-        <Button onClick={handleOpen}>Submit Final Vote to GitHub</Button>
-        <Modal
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          <Box sx={style}>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-              Final Vote
-            </Typography>
-            <FormControl>
-              <RadioGroup
-                row
-                aria-labelledby="demo-controlled-radio-buttons-group"
-                name="controlled-radio-buttons-group"
-                value={final}
-                onChange={handleFinalChange}
-              >
-                {getVotingButtons()}
-              </RadioGroup>
-            </FormControl>
-            <Button onClick={() => handleSubmit()}>Submit</Button>
-          </Box>
-        </Modal>
-      </>
-      {voteSubmitted && (
-        <div>
-          Submitted final vote {final} to issue {issuenumber}{" "}
+      <div className="party-main-container">
+        {/* User voting options */}
+        <FormControl>
+          <RadioGroup
+            row
+            aria-labelledby="demo-controlled-radio-buttons-group"
+            name="controlled-radio-buttons-group"
+            value={vote}
+            onChange={handleChange}
+          >
+            {getVotingButtons()}
+          </RadioGroup>
+        </FormControl>
+        {/* User vote submit */}
+        <div className="centerpage">
+          <Button
+            disabled={!vote || voteSubmitted}
+            onClick={() => {
+              handleVote();
+            }}
+          >
+            {" "}
+            Submit Vote{" "}
+          </Button>
         </div>
-      )}
-      <Button onClick={() => handleEndSession()}>End Session</Button>
+        {/* Submit final vote to github */}
+        <>
+          <div className="centerpage">
+            <Button onClick={handleOpen}>Submit Final Vote to GitHub</Button>
+          </div>
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={style}>
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                Final Vote
+              </Typography>
+              <FormControl>
+                <RadioGroup
+                  row
+                  aria-labelledby="demo-controlled-radio-buttons-group"
+                  name="controlled-radio-buttons-group"
+                  value={final}
+                  onChange={handleFinalChange}
+                >
+                  {getVotingButtons()}
+                </RadioGroup>
+              </FormControl>
+              <Button onClick={() => handleSubmit()}>Submit</Button>
+            </Box>
+          </Modal>
+        </>
+        {voteSubmitted && (
+          <div>
+            Submitted final vote {final} to issue {issuenumber}{" "}
+          </div>
+        )}
+      </div>
+      <div className="party-vote-info-container">
+        <VoteInfo party={party} />
+      </div>
     </div>
   );
 }

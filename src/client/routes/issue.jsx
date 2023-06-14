@@ -72,13 +72,6 @@ export default function Issue() {
   return (
     <>
       <h2>{reponame}</h2>
-      {isStarted && (
-        <PlanningParty
-          name={name}
-          reponame={reponame}
-          issuenumber={issuenumber}
-        />
-      )}
       <div>{getIssue()}</div>
       {!isStarted && (
         <>
@@ -108,6 +101,13 @@ export default function Issue() {
             </Box>
           </Modal>
         </>
+      )}
+      {isStarted && (
+        <PlanningParty
+          name={name}
+          reponame={reponame}
+          issuenumber={issuenumber}
+        />
       )}
     </>
   );

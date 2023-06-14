@@ -84,6 +84,22 @@ a:active {
   width: 100%;
 }
 
+.party-container {
+  display: flex;
+}
+
+.party-room-info-container {
+  flex-grow: 1;
+}
+
+.party-vote-info-container {
+  flex-grow: 1;
+}
+
+.party-main-container {
+  flex-grow: 4;
+}
+
 .login {
   display: flex;
   flex-direction: column;
@@ -192,7 +208,7 @@ form[action$="destroy"] button {
 }
 
 #sidebar {
-  width: 22rem;
+  width: 15rem;
   background-color: #fafafa;
   border-right: solid 1px #e3e3e3;
   display: flex;
