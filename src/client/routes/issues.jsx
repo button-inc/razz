@@ -1,5 +1,7 @@
-import { useLoaderData, Link, Outlet } from "react-router-dom";
+import { useLoaderData, Link, Outlet, Form } from "react-router-dom";
 import Navbar from "../components/navbar";
+import TextField from "@mui/material/TextField";
+import { useState } from "react";
 
 export async function loader({ params }) {
   const issues = [];
@@ -23,22 +25,37 @@ export async function loader({ params }) {
 
 export default function Issues() {
   const issues = useLoaderData();
+  const [search, setSearch] = useState("");
 
-  const listIssues = () => {
-    const issuesList = [];
-
+  const listIssues = (search) => {
     if (issues.length < 1) {
       return null;
     }
 
-    issues.forEach((issue, index) => {
-      issuesList.push(
-        <li key={index}>
-          <Link to={`issue/${issue.number}`}>
-            {issue.number} {issue.title}
-          </Link>
-        </li>
-      );
+    let issuesList = issues.map((issue) => {
+      const titleString = issue.title.toString();
+      const numberString = issue.number.toString();
+
+      // if the query is undefined or empty string, return the element
+      if (search === undefined || search === "") {
+        return (
+          <li key={issue.number}>
+            <Link to={`issue/${issue.number}`}>
+              {issue.number} {issue.title}
+            </Link>
+          </li>
+        );
+      }
+      // else if only return the item if contains the query
+      else if (titleString.includes(search) || numberString.includes(search)) {
+        return (
+          <li key={issue.number}>
+            <Link to={`issue/${issue.number}`}>
+              {issue.number} {issue.title}
+            </Link>
+          </li>
+        );
+      }
     });
     return issuesList;
   };
@@ -49,21 +66,16 @@ export default function Issues() {
         <div className="container">
           <div id="sidebar">
             <h1>GitHub Issues</h1>
-            <div>
-              <form id="search-form" role="search">
-                <input
-                  id="q"
-                  aria-label="Search contacts"
-                  placeholder="Search"
-                  type="search"
-                  name="q"
-                />
-                <div id="search-spinner" aria-hidden hidden={true} />
-                <div className="sr-only" aria-live="polite"></div>
-              </form>
-            </div>
+            <TextField
+              id="outlined-controlled"
+              label="Search"
+              value={search}
+              onChange={(event) => {
+                setSearch(event.target.value);
+              }}
+            />
             <nav>
-              <ul>{listIssues()}</ul>
+              <ul>{listIssues(search)}</ul>
             </nav>
           </div>
           <div id="detail">

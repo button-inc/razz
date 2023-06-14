@@ -54,7 +54,7 @@ app.get("/auth/exchange/", async (req, res, next) => {
 
     const token = new URLSearchParams(response.data).get("access_token");
     const cookie = Cookie.parse(`token=${token}`);
-    const jar = await cookiejar.setCookie(cookie, baseurl);
+    const jar = cookiejar.setCookie(cookie, baseurl);
 
     res.redirect(`${baseurl}user`);
   } catch (error) {
@@ -67,7 +67,7 @@ app.get("/github/user", async (req, res, next) => {
 
   try {
     const cookie = await cookiejar.getCookies(baseurl);
-    const token = await cookie[0].value;
+    const token = cookie[0].value;
 
     const endpoint = "https://api.github.com/graphql";
     const headers = {
@@ -193,7 +193,7 @@ app.get("/github/issues", async (req, res, next) => {
     const token = cookies[0]?.value;
 
     const response = await axios.get(
-      `https://api.github.com/repos/${owner}/${repo}/issues?page=${page}`,
+      `https://api.github.com/repos/${owner}/${repo}/issues?state=open&page=${page}`,
       {
         headers: {
           Accept: "application/vnd.github+json",
