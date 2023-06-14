@@ -118,7 +118,7 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
   const handleClose = () => setOpen(false);
 
   const handleSubmit = async () => {
-    await fetch(`/submitvote`, {
+    await fetch(`/github/label`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

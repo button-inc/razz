@@ -237,8 +237,8 @@ app.get("/github/issue", async (req, res, next) => {
   }
 });
 
-app.post("/submitvote", async (req, res, next) => {
-  console.log("/submitvote");
+app.post("/github/comment", async (req, res, next) => {
+  console.log("/github/comment");
   try {
     const { vote, repo, issuenumber } = req.body;
 
@@ -259,6 +259,64 @@ app.post("/submitvote", async (req, res, next) => {
       method: "post",
       headers: headers,
       data: { body: `${vote}` },
+    });
+
+    const { data } = await response;
+    res.json(data);
+  } catch (error) {
+    console.log(error);
+    return next(error);
+  }
+});
+
+app.post("/github/label", async (req, res, next) => {
+  console.log("/github/labels");
+  try {
+    const { vote, repo, issuenumber } = req.body;
+
+    const cookies = await cookiejar.getCookies(baseurl);
+    const token = cookies[0]?.value;
+
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28",
+    };
+
+    try {
+      const GET_LABEL_URL = `https://api.github.com/repos/${repo}/labels/${vote}`;
+      const getLabelResponse = await axios({
+        url: GET_LABEL_URL,
+        method: "get",
+        headers: headers,
+      });
+      const hasLabel = await getLabelResponse;
+    } catch {
+      console.log("label not found");
+      const CREATE_LABEL_URL = `https://api.github.com/repos/${repo}/labels`;
+      const colour = "546FFF";
+      const createLabelResponse = await axios({
+        url: CREATE_LABEL_URL,
+        method: "post",
+        headers: headers,
+        data: {
+          name: `${vote}`,
+          description: `Estimated effort of ${vote} from Razz`,
+          color: colour,
+        },
+      });
+
+      const labelCreated = await createLabelResponse;
+      console.log("labelCreated");
+    }
+
+    const ADD_LABEL_URL = `https://api.github.com/repos/${repo}/issues/${issuenumber}`;
+
+    const response = await axios({
+      url: ADD_LABEL_URL,
+      method: "patch",
+      headers: headers,
+      data: { labels: [`${vote}`] },
     });
 
     const { data } = await response;
