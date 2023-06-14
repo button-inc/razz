@@ -12,7 +12,7 @@ export default function RoomInfo({ party }) {
           return <li>{person.name}</li>;
         })}
       </ul>
-      <Button onClick={() => handleEndSession()}>End Session</Button>
+      <Button className="m-button" onClick={() => handleEndSession()}>End Session</Button>
     </>
   );
 }

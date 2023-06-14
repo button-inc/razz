@@ -155,6 +155,7 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
         {/* User vote submit */}
         <div className="centerpage">
           <Button
+          className="m-button"
             disabled={!vote || voteSubmitted}
             onClick={() => {
               handleVote();
@@ -167,7 +168,7 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
         {/* Submit final vote to github */}
         <>
           <div className="centerpage">
-            <Button onClick={handleOpen}>Submit Final Vote to GitHub</Button>
+            <Button className="m-button" onClick={handleOpen}>Submit Final Vote to GitHub</Button>
           </div>
           <Modal
             open={open}
@@ -190,7 +191,7 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
                   {getVotingButtons()}
                 </RadioGroup>
               </FormControl>
-              <Button onClick={() => handleSubmit()}>Submit</Button>
+              <Button className="m-button" onClick={() => handleSubmit()}>Submit</Button>
             </Box>
           </Modal>
         </>
