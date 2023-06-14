@@ -1,8 +1,24 @@
 import { useLoaderData, Link, Outlet } from "react-router-dom";
 import Navbar from "../components/navbar";
 
-export function loader({ params }) {
-  return fetch(`/github/issues?owner=${params.owner}&repo=${params.repo}`);
+export async function loader({ params }) {
+  const issues = [];
+  let i = 0;
+
+  do {
+    const response = await fetch(
+      `/github/issues?owner=${params.owner}&repo=${params.repo}&page=${i}`
+    );
+    const data = await response.json();
+    issues.push(...data);
+    i = i + 1;
+
+    if (data.length < 30) {
+      break;
+    }
+  } while (1);
+
+  return issues;
 }
 
 export default function Issues() {

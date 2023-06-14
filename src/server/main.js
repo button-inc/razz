@@ -105,7 +105,7 @@ app.get("/github/repo", async (req, res, next) => {
     // get the token cookie
     const cookies = await cookiejar.getCookies(baseurl);
 
-    const token = await cookies[0]?.value;
+    const token = cookies[0]?.value;
 
     const response = await axios.get(
       `https://api.github.com/user/repos?affiliation=collaborator&page=${page}`,
@@ -134,7 +134,7 @@ app.get("/github/repo/owner", async (req, res, next) => {
     // get the token cookie
     const cookies = await cookiejar.getCookies(baseurl);
 
-    const token = await cookies[0]?.value;
+    const token = cookies[0]?.value;
 
     const response = await axios.get(
       `https://api.github.com/user/repos?affiliation=owner&page=${page}`,
@@ -162,8 +162,7 @@ app.get("/github/repo/orgmember", async (req, res, next) => {
 
     // get the token cookie
     const cookies = await cookiejar.getCookies(baseurl);
-
-    const token = await cookies[0]?.value;
+    const token = cookies[0]?.value;
 
     const response = await axios.get(
       `https://api.github.com/user/repos?affiliation=organization_member&page=${page}`,
@@ -186,15 +185,15 @@ app.get("/github/repo/orgmember", async (req, res, next) => {
 app.get("/github/issues", async (req, res, next) => {
   console.log("/github/issues");
   try {
-    const { owner, repo } = req.query;
+    const { owner, repo, page } = req.query;
+    console.log("page", page);
 
     // get the token cookie
     const cookies = await cookiejar.getCookies(baseurl);
-
-    const token = await cookies[0]?.value;
+    const token = cookies[0]?.value;
 
     const response = await axios.get(
-      `https://api.github.com/repos/${owner}/${repo}/issues`,
+      `https://api.github.com/repos/${owner}/${repo}/issues?page=${page}`,
       {
         headers: {
           Accept: "application/vnd.github+json",
@@ -218,7 +217,7 @@ app.get("/github/issue", async (req, res, next) => {
 
     const cookies = await cookiejar.getCookies(baseurl);
 
-    const token = await cookies[0]?.value;
+    const token = cookies[0]?.value;
 
     const response = await axios.get(
       `https://api.github.com/repos/${owner}/${repo}/issues/${issue_number}`,
@@ -244,7 +243,7 @@ app.post("/submitvote", async (req, res, next) => {
     const { vote, repo, issuenumber } = req.body;
 
     const cookies = await cookiejar.getCookies(baseurl);
-    const token = await cookies[0]?.value;
+    const token = cookies[0]?.value;
 
     const headers = {
       Authorization: `Bearer ${token}`,
