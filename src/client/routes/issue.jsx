@@ -49,10 +49,10 @@ export default function Issue() {
   const getIssue = () => {
     return (
       <>
-        <Card sx={{ minWidth: 275 }}>
+        <Card sx={{ minWidth: 275, maxHeight: 250 }}>
           <CardContent>
             <Typography sx={{ fontSize: 14 }} gutterBottom>
-              <a href={issue.url}># {issue.number}</a>
+              <a href={issue.html_url}># {issue.number}</a>
             </Typography>
             <Typography variant="h5" component="div">
               {issue.title}

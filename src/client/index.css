@@ -86,6 +86,7 @@ a:active {
 
 .party-container {
   display: flex;
+  padding: 1rem;
 }
 
 .party-room-info-container {
@@ -98,6 +99,7 @@ a:active {
 
 .party-main-container {
   flex-grow: 4;
+  margin: 2rem;
 }
 
 .login {

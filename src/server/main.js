@@ -286,7 +286,6 @@ app.post("/vote", async (req, res, next) => {
   try {
     const { user, vote } = req.body;
 
-    // if no, create object?? but also maybe throw error because this shouldnt happpen?
     party.forEach((item) => {
       if (item.name === user) {
         item.estimate = vote;
@@ -372,6 +371,8 @@ app.get("/endsession", (req, res, next) => {
   party = [];
   res.redirect(`${baseurl}user`);
 });
+
+// ------------------------------ END Server-sent Events Session --------------------------- //
 
 ViteExpress.listen(app, port, () =>
   console.log(`Server is listening on port ${port}...`)
