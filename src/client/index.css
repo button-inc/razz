@@ -84,6 +84,10 @@ a:active {
   width: 100%;
 }
 
+.issue-container {
+  margin-bottom: 1rem;
+}
+
 .party-container {
   display: flex;
   padding: 1rem;

@@ -72,7 +72,7 @@ export default function Issue() {
   return (
     <>
       <h2>{reponame}</h2>
-      <div>{getIssue()}</div>
+      <div className="issue-container">{getIssue()}</div>
       {!isStarted && (
         <>
           <Button onClick={handleOpen}>Start planning party</Button>
