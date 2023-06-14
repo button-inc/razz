@@ -8,6 +8,8 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import RoomInfo from "./roominfo";
+import VoteInfo from "./voteinfo";
+// import { useNavigate } from "react-router-dom";
 
 const votingOptions = [
   "0",
@@ -37,10 +39,11 @@ const style = {
 export default function PlanningParty({ name, reponame, issuenumber }) {
   const [party, setParty] = useState({}); // party room vote data
   const [vote, setVote] = useState(); // this user vote selection
-  const [room, setRoom] = useState({ people: [] }); // users in the room
   const [final, setFinal] = useState();
   const [open, setOpen] = useState(false);
   const [voteSubmitted, setVoteSubmitted] = useState(false);
+
+  // const navigate = useNavigate();
 
   useEffect(() => {
     fetch(`/room`, {
@@ -59,17 +62,11 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
       console.log("SSE opened!");
     });
 
-    source.addEventListener("votes", (e) => {
+    source.addEventListener("party", (e) => {
       console.log(e.data);
       const data = JSON.parse(e.data);
 
       setParty(data);
-    });
-
-    source.addEventListener("room", (e) => {
-      console.log(e.data);
-      const data = JSON.parse(e.data);
-      setRoom(data);
     });
 
     source.addEventListener("error", (e) => {
@@ -90,19 +87,6 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
       },
       body: JSON.stringify({ user: name, vote: `${vote}` }),
     });
-  };
-
-  const getUserVotes = () => {
-    const userVotes = [];
-
-    Object.entries(party).forEach(([key, value]) => {
-      userVotes.push(
-        <li>
-          {key} : {value}
-        </li>
-      );
-    });
-    return userVotes;
   };
 
   const getVotingButtons = () => {
@@ -151,11 +135,14 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
     setVoteSubmitted(true);
   };
 
+  const handleEndSession = async () => {
+    await fetch("/endsession");
+  };
+
   return (
     <div>
-      <RoomInfo room={room} />
-      <div>votes</div>
-      <ul>{getUserVotes()}</ul>
+      <RoomInfo party={party} />
+      <VoteInfo party={party} />
       {/* User voting options */}
       <FormControl>
         <RadioGroup
@@ -213,6 +200,7 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
           Submitted final vote {final} to issue {issuenumber}{" "}
         </div>
       )}
+      <Button onClick={() => handleEndSession()}>End Session</Button>
     </div>
   );
 }

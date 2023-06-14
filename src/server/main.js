@@ -270,16 +270,15 @@ app.post("/submitvote", async (req, res, next) => {
   }
 });
 
-let votes = {};
-let room = { people: [] };
+let party = { votes: {}, people: [] };
 
 app.post("/vote", async (req, res, next) => {
   console.log("/vote");
   // TODO: ensure user has auth token
-  // TODO: pass some id in here to ensure votes are attributed to the right thing?
+  // TODO: pass some id in here to ensure party are attributed to the right thing?
   try {
     const { user, vote } = req.body;
-    votes[user] = vote;
+    party.votes[user] = vote;
     return res.json({ message: "Thank You" });
   } catch (error) {
     return next(error);
@@ -290,9 +289,9 @@ app.post("/room", async (req, res, next) => {
   console.log("/room");
   try {
     const { user } = req.body;
-    if (!(room.people.indexOf(user) > -1)) {
+    if (!(party.people.indexOf(user) > -1)) {
       console.log(user, " joined");
-      room.people.push(user);
+      party.people.push(user);
     }
     return res.json({ message: "Connected" });
   } catch (error) {
@@ -302,14 +301,8 @@ app.post("/room", async (req, res, next) => {
 
 const SEND_INTERVAL = 2000;
 
-const writeVoteEvent = (res, sseId, data) => {
-  res.write("event: votes\n");
-  res.write(`id: ${sseId}\n`);
-  res.write(`data: ${data}\n\n`);
-};
-
-const writeRoomEvent = (res, sseId, data) => {
-  res.write("event: room\n");
+const writePartyEvent = (res, sseId, data) => {
+  res.write("event: party\n");
   res.write(`id: ${sseId}\n`);
   res.write(`data: ${data}\n\n`);
 };
@@ -331,21 +324,14 @@ const sendEvent = (_req, res) => {
   console.log("sseID", sseId);
 
   setInterval(() => {
-    writeVoteEvent(res, sseId, JSON.stringify(votes));
+    writePartyEvent(res, sseId, JSON.stringify(party));
   }, SEND_INTERVAL);
 
-  setInterval(() => {
-    writeRoomEvent(res, sseId, JSON.stringify(room));
-  }, SEND_INTERVAL);
-
-  writeVoteEvent(res, sseId, JSON.stringify(votes));
-  writeRoomEvent(res, sseId, JSON.stringify(room));
+  writePartyEvent(res, sseId, JSON.stringify(party));
 };
 
 // TODO: add options to the url or the request body when creating the sse connection
 app.get("/party", (req, res) => {
-  const { repo } = req.query;
-
   req.on("close", () => {
     console.log("disconnected");
   });
@@ -360,8 +346,13 @@ app.get("/party", (req, res) => {
 });
 
 app.get("/clearvote", (req, res) => {
-  votes = {};
+  party.votes = {};
   res.json({ message: "Ok" });
+});
+
+app.get("/endsession", (req, res, next) => {
+  party = { votes: {}, people: [] };
+  res.redirect(`${baseurl}user`);
 });
 
 ViteExpress.listen(app, port, () =>
