@@ -75,7 +75,7 @@ export default function Issue() {
       <div className="issue-container">{getIssue()}</div>
       {!isStarted && (
         <>
-          <Button onClick={handleOpen}>Start planning party</Button>
+          <Button className="m-button" onClick={handleOpen}>Start planning party</Button>
           <Modal
             open={open}
             onClose={handleClose}
@@ -97,7 +97,13 @@ export default function Issue() {
                   setName(event.target.value);
                 }}
               />
-              <Button onClick={() => setIsStarted(true)}>Start</Button>
+              <Button
+                disabled={name === undefined}
+                className="m-button"
+                onClick={() => setIsStarted(true)}
+              >
+                Start
+              </Button>
             </Box>
           </Modal>
         </>

@@ -126,6 +126,12 @@ a:active {
   cursor: pointer;
 }
 
+.m-button {
+  display: flex !important;
+  color: #fafafa !important;
+  background: black !important;
+}
+
 .link-button:hover {
   box-shadow: 0 0px 1px hsla(0, 0%, 0%, 0.6), 0 1px 2px hsla(0, 0%, 0%, 0.2);
 }
@@ -139,6 +145,7 @@ a:active {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 1rem;
 }
 
 .centerpage h1 {
