@@ -36,7 +36,7 @@ export default function Issue() {
 
   // clear the voting history when you render an issue
   useEffect(() => {
-    fetch('/clearvote')
+    fetch("/clearvote");
   }, [issue]);
 
   const handleOpen = () => setOpen(true);
@@ -49,10 +49,10 @@ export default function Issue() {
   const getIssue = () => {
     return (
       <>
-        <Card sx={{ minWidth: 275 }}>
+        <Card sx={{ minWidth: 275, maxHeight: 250 }}>
           <CardContent>
             <Typography sx={{ fontSize: 14 }} gutterBottom>
-              <a href={issue.url}># {issue.number}</a>
+              <a href={issue.html_url}># {issue.number}</a>
             </Typography>
             <Typography variant="h5" component="div">
               {issue.title}
@@ -72,8 +72,7 @@ export default function Issue() {
   return (
     <>
       <h2>{reponame}</h2>
-      {isStarted && <PlanningParty name={name} reponame={reponame} issuenumber={issuenumber}/>}
-      <div>{getIssue()}</div>
+      <div className="issue-container">{getIssue()}</div>
       {!isStarted && (
         <>
           <Button onClick={handleOpen}>Start planning party</Button>
@@ -102,6 +101,13 @@ export default function Issue() {
             </Box>
           </Modal>
         </>
+      )}
+      {isStarted && (
+        <PlanningParty
+          name={name}
+          reponame={reponame}
+          issuenumber={issuenumber}
+        />
       )}
     </>
   );

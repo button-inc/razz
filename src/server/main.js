@@ -270,17 +270,45 @@ app.post("/submitvote", async (req, res, next) => {
   }
 });
 
-// TODO reset user votes when issue changes
-let votes = {};
+// ------------------------------ Server-sent Events Session --------------------------- //
+
+let party = [];
+// example user
+// user = {
+// "name": "tom",
+// "estimate": 5,
+// }
 
 app.post("/vote", async (req, res, next) => {
   console.log("/vote");
   // TODO: ensure user has auth token
-  // TODO: pass some id in here to ensure votes are attributed to the right thing?
+  // TODO: pass some id in here to ensure party are attributed to the right thing?
   try {
     const { user, vote } = req.body;
-    votes[user] = vote;
+
+    party.forEach((item) => {
+      if (item.name === user) {
+        item.estimate = vote;
+      }
+    });
+
     return res.json({ message: "Thank You" });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+app.post("/room", async (req, res, next) => {
+  console.log("/room");
+  try {
+    const { user } = req.body;
+
+    const uname = party.find((item) => item.name === user);
+    if (!uname) {
+      party.push({ name: user });
+    }
+
+    return res.json({ message: "Connected" });
   } catch (error) {
     return next(error);
   }
@@ -288,7 +316,8 @@ app.post("/vote", async (req, res, next) => {
 
 const SEND_INTERVAL = 2000;
 
-const writeEvent = (res, sseId, data) => {
+const writePartyEvent = (res, sseId, data) => {
+  res.write("event: party\n");
   res.write(`id: ${sseId}\n`);
   res.write(`data: ${data}\n\n`);
 };
@@ -300,18 +329,29 @@ const sendEvent = (_req, res) => {
     "Content-Type": "text/event-stream",
   });
 
-  // todo: create session id based on repo
-  const sseId = new Date().toDateString();
+  const { repo } = _req.query;
+  console.log(repo);
+  // todo: check if sseId already exists
+  // inform user there is already a session and redirect
+  // inform user who is the party leader?
+  // hash this??
+  const sseId = repo;
   console.log("sseID", sseId);
 
   setInterval(() => {
-    writeEvent(res, sseId, JSON.stringify(votes));
+    writePartyEvent(res, sseId, JSON.stringify(party));
   }, SEND_INTERVAL);
 
-  writeEvent(res, sseId, JSON.stringify(votes));
+  writePartyEvent(res, sseId, JSON.stringify(party));
 };
 
+// TODO: add options to the url or the request body when creating the sse connection
 app.get("/party", (req, res) => {
+  req.on("close", () => {
+    console.log("disconnected");
+  });
+
+  // TODO: Auth
   console.log("/party");
   if (req.headers.accept === "text/event-stream") {
     sendEvent(req, res);
@@ -321,9 +361,18 @@ app.get("/party", (req, res) => {
 });
 
 app.get("/clearvote", (req, res) => {
-  votes = {};
+  party.forEach((item) => {
+    item.estimate = null;
+  });
   res.json({ message: "Ok" });
 });
+
+app.get("/endsession", (req, res, next) => {
+  party = [];
+  res.redirect(`${baseurl}user`);
+});
+
+// ------------------------------ END Server-sent Events Session --------------------------- //
 
 ViteExpress.listen(app, port, () =>
   console.log(`Server is listening on port ${port}...`)
