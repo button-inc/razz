@@ -22,7 +22,7 @@ const votingOptions = [
   "?",
   "coffee",
 ];
-
+//TODO: move to index.css
 const style = {
   position: "absolute",
   top: "50%",
@@ -36,7 +36,7 @@ const style = {
 };
 
 export default function PlanningParty({ name, reponame, issuenumber }) {
-  const [party, setParty] = useState({}); // party room vote data
+  const [party, setParty] = useState([]); // party room vote data
   const [vote, setVote] = useState(); // this user vote selection
   const [final, setFinal] = useState();
   const [open, setOpen] = useState(false);

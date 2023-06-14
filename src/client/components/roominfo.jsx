@@ -8,8 +8,8 @@ export default function RoomInfo({ party }) {
     <>
       <div>People in the room</div>
       <ul>
-        {party?.people?.map((person) => {
-          return <li>{person}</li>;
+        {party?.map((person) => {
+          return <li>{person.name}</li>;
         })}
       </ul>
       <Button onClick={() => handleEndSession()}>End Session</Button>

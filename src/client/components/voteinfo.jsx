@@ -8,22 +8,6 @@ export default function VoteInfo({ party }) {
     setChecked(event.target.checked);
   };
 
-  const getUserVotes = () => {
-    const userVotes = [];
-    Object.entries(party.votes).forEach(([key, value]) => {
-      // if votes = {} -> list names and not voted
-      // make people array an array of tuples??
-
-      // if checked - push the real value
-      userVotes.push(
-        <li>
-          {key} : {value}
-        </li>
-      );
-    });
-    return userVotes;
-  };
-
   // display users not voted
   // show x/y voted
   // reveal votes
@@ -31,7 +15,17 @@ export default function VoteInfo({ party }) {
   return (
     <>
       <div>Votes</div>
-      <ul>{party?.votes && getUserVotes()}</ul>
+      <ul>
+        {party?.map((person) => {
+          return (
+            <li>
+              {person.name}
+              {":"}
+              {person.estimate}
+            </li>
+          );
+        })}
+      </ul>
       <div>Reveal Votes</div>
       <Switch
         checked={checked}

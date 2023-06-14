@@ -270,7 +270,14 @@ app.post("/submitvote", async (req, res, next) => {
   }
 });
 
-let party = { votes: {}, people: [] };
+// ------------------------------ Server-sent Events Session --------------------------- //
+
+let party = [];
+// example user
+// user = {
+// "name": "tom",
+// "estimate": 5,
+// }
 
 app.post("/vote", async (req, res, next) => {
   console.log("/vote");
@@ -278,7 +285,14 @@ app.post("/vote", async (req, res, next) => {
   // TODO: pass some id in here to ensure party are attributed to the right thing?
   try {
     const { user, vote } = req.body;
-    party.votes[user] = vote;
+
+    // if no, create object?? but also maybe throw error because this shouldnt happpen?
+    party.forEach((item) => {
+      if (item.name === user) {
+        item.estimate = vote;
+      }
+    });
+
     return res.json({ message: "Thank You" });
   } catch (error) {
     return next(error);
@@ -289,10 +303,12 @@ app.post("/room", async (req, res, next) => {
   console.log("/room");
   try {
     const { user } = req.body;
-    if (!(party.people.indexOf(user) > -1)) {
-      console.log(user, " joined");
-      party.people.push(user);
+
+    const uname = party.find((item) => item.name === user);
+    if (!uname) {
+      party.push({ name: user });
     }
+
     return res.json({ message: "Connected" });
   } catch (error) {
     return next(error);
@@ -346,12 +362,14 @@ app.get("/party", (req, res) => {
 });
 
 app.get("/clearvote", (req, res) => {
-  party.votes = {};
+  party.forEach((item) => {
+    item.estimate = null;
+  });
   res.json({ message: "Ok" });
 });
 
 app.get("/endsession", (req, res, next) => {
-  party = { votes: {}, people: [] };
+  party = [];
   res.redirect(`${baseurl}user`);
 });
 
