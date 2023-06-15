@@ -63,7 +63,6 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
     source.addEventListener("party", (e) => {
       console.log(e.data);
       const data = JSON.parse(e.data);
-
       setParty(data);
     });
 
@@ -135,40 +134,58 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
   };
 
   return (
-    <div className="party-container">
-      <div className="party-room-info-container">
-        <RoomInfo party={party} />
+    <>
+      <div className="party-container">
+        <div className="party-room-info-container">
+          <RoomInfo party={party} />
+        </div>
+        <div className="party-vote-info-container">
+          <VoteInfo party={party} />
+        </div>
       </div>
       <div className="party-main-container">
         {/* User voting options */}
-        <FormControl>
-          <RadioGroup
-            row
-            aria-labelledby="demo-controlled-radio-buttons-group"
-            name="controlled-radio-buttons-group"
-            value={vote}
-            onChange={handleChange}
-          >
-            {getVotingButtons()}
-          </RadioGroup>
-        </FormControl>
-        {/* User vote submit */}
-        <div className="centerpage">
-          <Button
-          className="m-button"
-            disabled={!vote || voteSubmitted}
-            onClick={() => {
-              handleVote();
-            }}
-          >
-            {" "}
-            Submit Vote{" "}
-          </Button>
-        </div>
+        {!voteSubmitted && (
+          <>
+            <FormControl>
+              <RadioGroup
+                row
+                aria-labelledby="demo-controlled-radio-buttons-group"
+                name="controlled-radio-buttons-group"
+                value={vote}
+                onChange={handleChange}
+              >
+                {getVotingButtons()}
+              </RadioGroup>
+            </FormControl>
+            {/* User vote submit */}
+            <div className="centerpage">
+              <Button
+                className="m-button"
+                disabled={!vote}
+                onClick={() => {
+                  handleVote();
+                }}
+              >
+                {" "}
+                Submit Vote{" "}
+              </Button>
+            </div>
+          </>
+        )}
+        {voteSubmitted && (
+          <div className="submitted-banner">
+            {"Final estimation "}
+            {final}
+            {" added to GitHub issue "}#{issuenumber}{" "}
+          </div>
+        )}
         {/* Submit final vote to github */}
         <>
           <div className="centerpage">
-            <Button className="m-button" onClick={handleOpen}>Submit Final Vote to GitHub</Button>
+            <Button className="m-button" onClick={handleOpen}>
+              Submit Final Vote to GitHub
+            </Button>
           </div>
           <Modal
             open={open}
@@ -191,19 +208,13 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
                   {getVotingButtons()}
                 </RadioGroup>
               </FormControl>
-              <Button className="m-button" onClick={() => handleSubmit()}>Submit</Button>
+              <Button className="m-button" onClick={() => handleSubmit()}>
+                Submit
+              </Button>
             </Box>
           </Modal>
         </>
-        {voteSubmitted && (
-          <div>
-            Submitted final vote {final} to issue {issuenumber}{" "}
-          </div>
-        )}
       </div>
-      <div className="party-vote-info-container">
-        <VoteInfo party={party} />
-      </div>
-    </div>
+    </>
   );
 }

@@ -6,13 +6,15 @@ export default function RoomInfo({ party }) {
   };
   return (
     <>
-      <div>People in the room</div>
+      <h2>People in the room</h2>
       <ul>
         {party?.map((person) => {
-          return <li>{person.name}</li>;
+          return <li className="list-item-party-info">{person.name}</li>;
         })}
       </ul>
-      <Button className="m-button" onClick={() => handleEndSession()}>End Session</Button>
+      <Button className="m-button" onClick={() => handleEndSession()}>
+        End Session
+      </Button>
     </>
   );
 }
