@@ -222,8 +222,9 @@ app.get("/github/issues", async (req, res, next) => {
 
       const { data } = await response;
       res.json(data);
+    } else {
+      return res.json({ message: "no permissions" });
     }
-    return res.json({ message: "no permissions" });
   } catch (error) {
     return next(error);
   }

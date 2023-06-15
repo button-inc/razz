@@ -5,7 +5,7 @@ import { useState } from "react";
 
 export async function loader({ params }) {
   const issues = [];
-  let i = 0;
+  let i = 1;
 
   do {
     const response = await fetch(
@@ -39,7 +39,7 @@ export default function Issues() {
       // if the query is undefined or empty string, return the element
       if (search === undefined || search === "") {
         return (
-          <li key={issue.number}>
+          <li key={issue.id}>
             <Link to={`issue/${issue.number}`}>
               {issue.number} {issue.title}
             </Link>
@@ -49,7 +49,7 @@ export default function Issues() {
       // else if only return the item if contains the query
       else if (titleString.includes(search) || numberString.includes(search)) {
         return (
-          <li key={issue.number}>
+          <li key={issue.id}>
             <Link to={`issue/${issue.number}`}>
               {issue.number} {issue.title}
             </Link>
