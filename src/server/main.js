@@ -96,6 +96,7 @@ app.get("/github/user", async (req, res, next) => {
   }
 });
 
+// NOT USING
 app.get("/github/repo", async (req, res, next) => {
   console.log("/github/repo");
   try {
@@ -125,6 +126,7 @@ app.get("/github/repo", async (req, res, next) => {
   }
 });
 
+// NOT USING
 app.get("/github/repo/owner", async (req, res, next) => {
   console.log("/github/repo");
   try {
@@ -154,6 +156,7 @@ app.get("/github/repo/owner", async (req, res, next) => {
   }
 });
 
+// NOT USING
 app.get("/github/repo/orgmember", async (req, res, next) => {
   console.log("/github/repo");
   try {
@@ -192,8 +195,8 @@ app.get("/github/issues", async (req, res, next) => {
     const cookies = await cookiejar.getCookies(baseurl);
     const token = cookies[0]?.value;
 
-    const response = await axios.get(
-      `https://api.github.com/repos/${owner}/${repo}/issues?state=open&page=${page}`,
+    const permissionResponse = await axios.get(
+      `https://api.github.com/repos/${owner}/${repo}`,
       {
         headers: {
           Accept: "application/vnd.github+json",
@@ -202,9 +205,25 @@ app.get("/github/issues", async (req, res, next) => {
         },
       }
     );
+    const { data } = await permissionResponse;
 
-    const { data } = await response;
-    res.json(data);
+    if (data.permissions.admin || data.permissions.push) {
+      console.log("has permission");
+      const response = await axios.get(
+        `https://api.github.com/repos/${owner}/${repo}/issues?state=open&page=${page}`,
+        {
+          headers: {
+            Accept: "application/vnd.github+json",
+            Authorization: `Bearer ${token}`,
+            "X-GitHub-Api-Version": "2022-11-28",
+          },
+        }
+      );
+
+      const { data } = await response;
+      res.json(data);
+    }
+    return res.json({ message: "no permissions" });
   } catch (error) {
     return next(error);
   }
