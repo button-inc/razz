@@ -121,6 +121,16 @@ a:active {
   background: white;
 }
 
+.submitted-banner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 10px;
+  background: #d7e5bc;
+  color: #4c7500;
+}
+
 .link-button {
   display: flex;
   text-align: center;

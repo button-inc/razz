@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Switch from "@mui/material/Switch";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 
 export default function VoteInfo({ party }) {
   const [checked, setChecked] = useState(false); // reveal votes = true
@@ -19,9 +19,10 @@ export default function VoteInfo({ party }) {
   return (
     <>
       <h2>
-        {"Votes"} {count}
+        {count}
         {"/"}
         {total}
+        {"voted"}
       </h2>
       <ul>
         {party?.map((person) => {
@@ -35,7 +36,7 @@ export default function VoteInfo({ party }) {
             const icon = person.estimate ? (
               <CheckCircleIcon />
             ) : (
-              <RadioButtonUncheckedIcon />
+              <HighlightOffIcon />
             );
             return (
               <li className="list-item-party-info">

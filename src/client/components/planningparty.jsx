@@ -63,7 +63,6 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
     source.addEventListener("party", (e) => {
       console.log(e.data);
       const data = JSON.parse(e.data);
-
       setParty(data);
     });
 
@@ -146,30 +145,41 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
       </div>
       <div className="party-main-container">
         {/* User voting options */}
-        <FormControl>
-          <RadioGroup
-            row
-            aria-labelledby="demo-controlled-radio-buttons-group"
-            name="controlled-radio-buttons-group"
-            value={vote}
-            onChange={handleChange}
-          >
-            {getVotingButtons()}
-          </RadioGroup>
-        </FormControl>
-        {/* User vote submit */}
-        <div className="centerpage">
-          <Button
-            className="m-button"
-            disabled={!vote || voteSubmitted}
-            onClick={() => {
-              handleVote();
-            }}
-          >
-            {" "}
-            Submit Vote{" "}
-          </Button>
-        </div>
+        {!voteSubmitted && (
+          <>
+            <FormControl>
+              <RadioGroup
+                row
+                aria-labelledby="demo-controlled-radio-buttons-group"
+                name="controlled-radio-buttons-group"
+                value={vote}
+                onChange={handleChange}
+              >
+                {getVotingButtons()}
+              </RadioGroup>
+            </FormControl>
+            {/* User vote submit */}
+            <div className="centerpage">
+              <Button
+                className="m-button"
+                disabled={!vote}
+                onClick={() => {
+                  handleVote();
+                }}
+              >
+                {" "}
+                Submit Vote{" "}
+              </Button>
+            </div>
+          </>
+        )}
+        {voteSubmitted && (
+          <div className="submitted-banner">
+            {"Final estimation "}
+            {final}
+            {" added to GitHub issue "}#{issuenumber}{" "}
+          </div>
+        )}
         {/* Submit final vote to github */}
         <>
           <div className="centerpage">
@@ -204,11 +214,6 @@ export default function PlanningParty({ name, reponame, issuenumber }) {
             </Box>
           </Modal>
         </>
-        {voteSubmitted && (
-          <div>
-            Submitted final vote {final} to issue {issuenumber}{" "}
-          </div>
-        )}
       </div>
     </>
   );
