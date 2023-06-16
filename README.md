@@ -16,7 +16,8 @@ Use consensus-based estimation with your team to assign estimates to your GitHub
 | UI Framework           | [React](https://facebook.github.io/react/)                      |
 | UI Routing             | [React Router](https://reactrouter.com/en/main)                 |
 | UI Components          | [MUI](https://mui.com/)                                         |
-
+| Build                  | [Vite](https://github.com/vitejs/vite)                          |
+| Integration            | [vite-express](https://github.com/szymmis/vite-express)         |
 
 ### Prerequisites
 
