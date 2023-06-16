@@ -257,6 +257,7 @@ app.get("/github/issue", async (req, res, next) => {
   }
 });
 
+// Not used
 app.post("/github/comment", async (req, res, next) => {
   console.log("/github/comment");
   try {
@@ -350,11 +351,6 @@ app.post("/github/label", async (req, res, next) => {
 // ------------------------------ Server-sent Events Session --------------------------- //
 
 let party = [];
-// example user
-// user = {
-// "name": "tom",
-// "estimate": 5,
-// }
 
 app.post("/vote", async (req, res, next) => {
   console.log("/vote");
